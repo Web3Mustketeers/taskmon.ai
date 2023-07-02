@@ -7,14 +7,14 @@
 flowchart TD
     Z(each dev)==>|Step0: Stake sol|Y[Solana token stake program]
     A[Step1:Pull the first incomplete task] -->|tasks with feature point| B(UI Frontend)
-    B -->|updated tasks with some evidence like Github PR link| C[Step2 Enrich result and sotre in VecotrDB]
+    B -->|updated tasks with some evidence like Github PR link| C[Step2 Enrich result and store in the VectorDB]
     C -->|RetreiveContext| D(ContextAgent)
     D -.-> |context| C
     C -->|store result in Vector DB| E[Step3 Create new tasks and reprioritize task list]
     E -->|Send token to task executor|Y
     Y -.->|transfer token|Z
     E -->|Loop|A
-    E -->|create new tasks| F(tasc creation agent)
+    E -->|create new tasks| F(task creation agent)
     F -.->|Return new tasks|E
     E -->|reprioritize & calc feature point of tasks| G(prioritization & feature point agent)
     G -.->|Return prioritized tasks|E   
