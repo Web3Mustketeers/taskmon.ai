@@ -11,7 +11,8 @@ flowchart TD
     C -->|RetreiveContext| D(ContextAgent)
     D -.-> |context| C
     C -->|store result in Vector DB| E[Step3 Create new tasks and reprioritize task list]
-    E -->|Send token to executor|Y
+    E -->|Send token to task executor|Y
+    Y -.->|transfer token|Z
     E -->|Loop|A
     E -->|create new tasks| F(tasc creation agent)
     F -.->|Return new tasks|E
