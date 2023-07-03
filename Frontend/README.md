@@ -12,7 +12,6 @@ This is a solution to the [Kanban task management web app challenge on Frontend 
   - [Links](#links)
   - [Built with](#built-with)
   - [Useful resources](#useful-resources)
-- [Author](#author)
 
 ## Overview
 
@@ -65,6 +64,3 @@ Bonus:
 
 - [Drag and Drop quick tutorial](https://www.youtube.com/watch?v=u65Y-vqYNAk)
 
-## Author
-
-- LinkedIn - [Hesam DearBoy](https://www.linkedin.com/in/hesam-azizpour-23259b265/)
