@@ -9,8 +9,8 @@ import lightIcon from '../assets/icon-light-theme.svg'
 import showSidebarIcon from '../assets/icon-show-sidebar.svg'
 import hideSidebarIcon from '../assets/icon-hide-sidebar.svg'
 
-import boardsSlice from '../redux/boardsSlice'
-import AddEditBoardModal from '../modals/AddEditBoardModal'
+import boardsSlice from '@redux/boardsSlice'
+import AddEditBoardModal from '@modals/AddEditBoardModal'
 
 function Sidebar({ isSideBarOpen, setIsSideBarOpen }) {
   const dispatch = useDispatch()

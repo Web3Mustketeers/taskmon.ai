@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Header from './components/Header'
-import Home from './components/Home'
-import EmptyBoard from './components/EmptyBoard'
-import boardsSlice from './redux/boardsSlice'
+import Header from '@components/Header'
+import Home from '@components/Home'
+import EmptyBoard from '@components/EmptyBoard'
+import boardsSlice from '@redux/boardsSlice'
 
 function App() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false)

@@ -5,11 +5,11 @@ import iconUp from '../assets/icon-chevron-up.svg'
 import elipsis from '../assets/icon-vertical-ellipsis.svg'
 import HeaderDropDown from './HeaderDropDown'
 import ElipsisMenu from './ElipsisMenu'
-import AddEditTaskModal from '../modals/AddEditTaskModal'
-import AddEditBoardModal from '../modals/AddEditBoardModal'
+import AddEditTaskModal from '@modals/AddEditTaskModal'
+import AddEditBoardModal from '@modals/AddEditBoardModal'
 import { useDispatch, useSelector } from 'react-redux'
-import DeleteModal from '../modals/DeleteModal'
-import boardsSlice from '../redux/boardsSlice'
+import DeleteModal from '@modals/DeleteModal'
+import boardsSlice from '@redux/boardsSlice'
 
 function Header({ setIsBoardModalOpen, isBoardModalOpen }) {
   const [openDropdown, setOpenDropdown] = useState(false)

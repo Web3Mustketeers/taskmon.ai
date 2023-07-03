@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch } from '@headlessui/react'
-import boardIcon from '../assets/icon-board.svg'
-import useDarkMode from '../hooks/useDarkMode'
-import darkIcon from '../assets/icon-dark-theme.svg'
-import lightIcon from '../assets/icon-light-theme.svg'
-import boardsSlice from '../redux/boardsSlice'
+import boardIcon from '@assets/icon-board.svg'
+import useDarkMode from '@hooks/useDarkMode'
+import darkIcon from '@assets/icon-dark-theme.svg'
+import lightIcon from '@assets/icon-light-theme.svg'
+import boardsSlice from '@redux/boardsSlice'
 
 function HeaderDropDown({ setOpenDropdown, setIsBoardModalOpen }) {
   const dispatch = useDispatch()
