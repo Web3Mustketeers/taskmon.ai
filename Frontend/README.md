@@ -1,54 +1,70 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Frontend Mentor - Kanban task management web app solution
 
-## Description
+- [this project YouTube video Tutorial](https://www.youtube.com/watch?v=3RWMktZNsJQ&t=1707s)
 
-Task management UI built using React, NextJS, semantic-ui-react, unstated.
+This is a solution to the [Kanban task management web app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/kanban-task-management-web-app-wgQLt-HlbB). Frontend Mentor challenges help you improve your coding skills by building realistic projects.
 
-This repo is the frontend for Task Management API available on repo https://github.com/nandral/nestjs-typeorm-task-mgmt
+## Table of contents
 
-## About Task Management
+- [Overview](#overview)
+  - [The challenge](#the-challenge)
+  - [Screenshot](#screenshot)
+  - [Links](#links)
+  - [Built with](#built-with)
+  - [Useful resources](#useful-resources)
+- [Author](#author)
 
+## Overview
 
-### Functional specs
+### The challenge
 
-Task management allows users to register, create tasks and manage them, major features are
+Users should be able to:
 
-- User SignUp & SignIn
-- Create Tasks which are visible only to the logged in users
-- New created tasks will be in OPEN status
-- Update task status to IN_PROGRESS or DONE
-- Delete tasks
-- UI is Responsive looks good on mobile, tablet & desktops
+- View the optimal layout for the app depending on their device's screen size
+- See hover states for all interactive elements on the page
+- Create, read, update, and delete boards and tasks
+- Receive form validations when trying to create/edit boards and tasks
+- Mark subtasks as complete and move tasks between columns
+- Hide/show the board sidebar
 
-### Technical methodologies followed
+Expected Behaviour:
 
-- React v16+, using Hooks like useState, useEffect along with Stateful Functional Components
-- NextJS v9+ for server-rendering, automatic code splitting, React Fast Refresh
-- [Unstated](https://github.com/jamiebuilds/unstated) for Simple state management
-- Semantic UI React framework for theming, styling & prebuilt responsive React components
-- [TestCafe](https://devexpress.github.io/testcafe/) to automate
-  end-to-end web testing
-  
+- Boards
+  - Clicking different boards in the sidebar will change to the selected board.
+  - Clicking "Create New Board" in the sidebar opens the "Add New Board" modal.
+  - Clicking in the dropdown menu "Edit Board" opens up the "Edit Board" modal where details can be changed.
+  - Columns are added and removed for the Add/Edit Board modals.
+  - Deleting a board deletes all columns and tasks and requires confirmation.
+- Columns
+  - A board needs at least one column before tasks can be added. If no columns exist, the "Add New Task" button in the header is disabled.
+  - Clicking "Add New Column" opens the "Edit Board" modal where columns are added.
+- Tasks
+  - Adding a new task adds it to the bottom of the relevant column.
+  - Updating a task's status will move the task to the relevant column.
 
+Bonus:
 
+- The tasks can be dragged and dropped to a new column.
 
-## Running Dev server
+### Screenshot
 
-```bash
-npm run dev
-```
+![Screenshot](<./public/screenshots/Screen%20Shot%202023-03-29%20at%201.40.56%20PM%20(2).png>)
 
-Open [http://localhost:5000](http://localhost:5000) with your browser to see the result.
+### Links
 
-## _TestCafe_ end-to-end Tests
+- Live Site URL: [link](https://kanban-task-management-react-tailwind.vercel.app/)
 
-TestCafe provides an option of writing cross-browser functional tests in JavaScript. It's like write once and run on different browsers just by changing command.
+### Built with
 
-I have tested this frontend on 3 browsers.
+- [TailwindCSS](https://tailwindcss.com/) - CSS Framework
+- Drag and Drop API
+- [React](https://reactjs.org/) - JS library
+- [Redux](https://redux.js.org/) - State management tool
 
-```bash
-npm run test:chrome
-npm run test:safari
-npm run test:firefox
+### Useful resources
 
-```
+- [Drag and Drop quick tutorial](https://www.youtube.com/watch?v=u65Y-vqYNAk)
+
+## Author
+
+- LinkedIn - [Hesam DearBoy](https://www.linkedin.com/in/hesam-azizpour-23259b265/)
