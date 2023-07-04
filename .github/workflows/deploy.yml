@@ -30,9 +30,9 @@ defaults:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.build-publish.outputs.page_url }}
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.build-publish.outputs.page_url }}
 
     steps:
       - name: Checkout repository
