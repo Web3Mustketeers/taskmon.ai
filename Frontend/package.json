@@ -21,7 +21,10 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "predeploy": "npm run build",
+    "deploy": "surge build taskmon.surge.sh",
+    "postdeploy": "surge build taskmon-ai.surge.sh && surge build taskmon-agi.surge.sh"
   },
   "eslintConfig": {
     "extends": [
