@@ -1,9 +1,9 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import * as config from 'config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm'
+import * as config from 'config'
 
-const dbConfig = config.get('db');
+const dbConfig = config.get('db')
 
-const { host, port, username, password, database, synchronize } = dbConfig;
+const { host, port, username, password, database, synchronize } = dbConfig
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: dbConfig.type,
@@ -18,4 +18,4 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
    * so that TYPEORM will create schema from entity definitions
    */
   synchronize: process.env.TYPEORM_SYNC || synchronize,
-};
+}
