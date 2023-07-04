@@ -24,7 +24,7 @@ permissions:
 
 defaults:
   run:
-    working-directory: ./
+    working-directory: ${{ github.workspace }}/Frontend
     shell: bash
 jobs:
   deploy:
@@ -38,10 +38,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
-
-      - name: Set working directory
-        run: |
-          cd ./Frontend
 
       - name: Get npm cache
         id: npm-cache
