@@ -37,7 +37,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: 20
+
+      - name: Set working directory
+        run: |
+          cd ./Frontend
 
       - name: Get npm cache
         id: npm-cache
@@ -56,7 +60,7 @@ jobs:
       - name: Install dependencies
         run: npm install --include=dev
 
-      - name: Deploy React to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: bitovi/github-actions-react-to-ghp@v1.2.0
         with:
           checkout: false
