@@ -93,12 +93,12 @@ function Sidebar({ isSideBarOpen, setIsSideBarOpen }) {
           {isSideBarOpen ? (
             <div
               onClick={() => toggleSidebar()}
-              className=" flex  items-center mt-2  absolute bottom-16  text-lg font-bold  rounded-r-full hover:text-[#635FC7] cursor-pointer mr-6 mb-8 px-8 py-4 hover:bg-[#635fc71a] dark:hover:bg-white  space-x-2 justify-center  my-4 text-gray-500 ">
+              className=" flex  items-center mt-2   absolute bottom-10  text-lg font-bold  rounded-r-full hover:text-[#635FC7] cursor-pointer mr-6 mb-8 px-8 py-4 hover:bg-[#635fc71a] dark:hover:bg-white  space-x-2 justify-center  my-4 text-gray-500 ">
               <img className=" min-w-[20px]" src={hideSidebarIcon} alt=" side bar show/hide" />
               {isSideBarOpen && <p> Hide Sidebar </p>}
             </div>
           ) : (
-            <div className=" absolute p-5  " onClick={() => toggleSidebar()}>
+            <div className=" absolute p-5   " onClick={() => toggleSidebar()}>
               <img src={showSidebarIcon} alt="showSidebarIcon" />
             </div>
           )}
