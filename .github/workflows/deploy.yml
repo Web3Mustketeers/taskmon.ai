@@ -24,11 +24,15 @@ permissions:
 
 defaults:
   run:
-    working-directory: ${{ github.workspace }}/Frontend
+    working-directory: ./Frontend
     shell: bash
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.build-publish.outputs.page_url }}
 
     steps:
       - name: Checkout repository
