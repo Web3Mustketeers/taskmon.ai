@@ -71,7 +71,7 @@ jobs:
       - name: Get working directory
         id: wkdir
         run: |
-          echo "wkdir=$(pwd) >> $GITHUB_OUTPUT
+          echo "wkdir=$(pwd)" >> $GITHUB_OUTPUT
 
       - name: Preview to ${{ steps.extract_domain.outputs.preview_domain }}
         uses: dswistowski/surge-sh-action@v1
