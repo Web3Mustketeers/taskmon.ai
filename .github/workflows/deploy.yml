@@ -50,20 +50,21 @@ jobs:
         id: npm-cache
         run: echo "NPM_CACHE_DIR=$(pwd)/node_modules" >> "${GITHUB_OUTPUT}"
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.npm-cache.outputs.NPM_CACHE_DIR }}
-          key:
-            npm-${{github.workflow}}-${{ runner.os }}-${{
-            hashFiles('**package.json') }}
-          restore-keys: |
-            npm-${{github.workflow}}-${{ runner.os }}-${{ hashFiles('**package.json') }}
 
       - name: Get working directory
         id: wkdir
         run: |
           echo "wkdir=$(pwd)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.npm-cache.outputs.NPM_CACHE_DIR }}
+          key:
+            npm-${{github.workflow}}-${{ runner.os }}-${{ hashFiles('${{ steps.wkdir.outputs.wkdir }}/package.json') }}
+
+          restore-keys: |
+            npm-${{github.workflow}}-${{ runner.os }}-${{ hashFiles('${{ steps.wkdir.outputs.wkdir }}/package.json') }}
 
       - name: Install dependencies
         run: npm install --include=dev
