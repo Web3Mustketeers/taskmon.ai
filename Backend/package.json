@@ -1,10 +1,10 @@
 {
   "name": "nestjs-typeorm-task-mgmt",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "",
   "author": "",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -44,7 +44,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "config": "^3.3.1",
-    "eslint": "7.1.0",
+    "eslint": "8.44.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
     "jest": "26.0.1",
