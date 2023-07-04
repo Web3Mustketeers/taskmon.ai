@@ -60,6 +60,11 @@ jobs:
           restore-keys: |
             npm-${{github.workflow}}-${{ runner.os }}-${{ hashFiles('**package.json') }}
 
+      - name: Get working directory
+        id: wkdir
+        run: |
+          echo "wkdir=$(pwd)" >> $GITHUB_OUTPUT
+
       - name: Install dependencies
         run: npm install --include=dev
 
@@ -68,6 +73,6 @@ jobs:
         with:
           checkout: true
           # Specifies the path of the static assets after building
-          path: ./build
+          path: ${{ steps.wkdir.outputs.wkdir }}/build
           # Specifies the command to run after npm ci for the build
           build_command: npm run build
