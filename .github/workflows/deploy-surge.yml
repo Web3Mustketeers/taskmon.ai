@@ -9,7 +9,7 @@ on:
       - '**'
     paths:
       - '.github/workflows/deploy.yml'
-      -
+
   pull_request: #FIXME: remove after testing
     branches: [ "main" ]
 
