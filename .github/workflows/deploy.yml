@@ -65,6 +65,6 @@ jobs:
         with:
           checkout: false
           # Specifies the path of the static assets after building
-          path: ${{ github.workspace }}/Frontend/build
+          path: ./build
           # Specifies the command to run after npm ci for the build
           build_command: npm run build
