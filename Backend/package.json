@@ -1,8 +1,8 @@
 {
-  "name": "nestjs-typeorm-task-mgmt",
+  "name": "api-taskmon.ai",
   "version": "0.2.0",
-  "description": "",
-  "author": "",
+  "description": "Web2 apis for taskmon.ai",
+  "author": "Web3mustketeers",
   "private": true,
   "license": "MIT",
   "scripts": {
