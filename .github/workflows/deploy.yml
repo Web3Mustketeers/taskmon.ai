@@ -24,7 +24,7 @@ permissions:
 
 defaults:
   run:
-    working-directory: ./Frontend
+    working-directory: ./
     shell: bash
 jobs:
   deploy:
