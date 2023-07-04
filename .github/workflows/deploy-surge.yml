@@ -68,11 +68,16 @@ jobs:
           sref=${ref//\//-}
           echo "preview_domain=$sref-$domain" >> $GITHUB_OUTPUT
 
+      - name: Get working directory
+        id: wkdir
+        run: |
+          echo "wkdir=$(pwd) >> $GITHUB_OUTPUT
+
       - name: Preview to ${{ steps.extract_domain.outputs.preview_domain }}
         uses: dswistowski/surge-sh-action@v1
         with:
           domain: ${{ steps.extract_domain.outputs.preview_domain }}
-          project: './build'
+          project: ${{ steps.wkdir.outputs.wkdir }}/build
           login: ${{ secrets.surge_login }}
           token: ${{ secrets.surge_token }}
 
@@ -83,6 +88,6 @@ jobs:
         uses: dswistowski/surge-sh-action@v1
         with:
           domain: ${env.domain}
-          project: './build'
+          project: ${{ steps.wkdir.outputs.wkdir }}/build
           login: ${{ secrets.surge_login }}
           token: ${{ secrets.surge_token }}
