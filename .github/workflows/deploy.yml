@@ -33,7 +33,7 @@ defaults:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-#    environment:
+    environment: default
 #      name: github-pages
 #      url: ${{ steps.build-publish.outputs.page_url }}
 
