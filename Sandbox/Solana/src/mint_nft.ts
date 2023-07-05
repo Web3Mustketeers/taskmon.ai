@@ -1,39 +1,12 @@
-import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { Metaplex, keypairIdentity, bundlrStorage, toMetaplexFile, toBigNumber } from "@metaplex-foundation/js";
 import * as fs from 'fs';
-import secret = require('/Users/takehararyuuji/ryu-solana-wallet/my-keypair.json');
-
 const SOLANA_CONNECTION = new Connection(
   "https://api.devnet.solana.com",
   "confirmed"
 );
-const WALLET = Keypair.fromSecretKey(new Uint8Array(secret));
 
-const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
-    .use(keypairIdentity(WALLET))
-    .use(bundlrStorage({
-        address: 'https://devnet.bundlr.network',
-        providerUrl: "https://api.devnet.solana.com",
-        timeout: 60000,
-    }));
-  
-const CONFIG = {
-  uploadPath: './src/images/',
-  imgFileName: 's1.png',
-  imgType: 'image/png',
-  imgName: 'ProjectMember',
-  description: 'Official web!',
-  attributes: [
-      {trait_type: 'Speed', value: 'Quick'},
-      {trait_type: 'Type', value: 'Pixelated'},
-      {trait_type: 'Background', value: 'QuickNode Blue'}
-  ],
-  sellerFeeBasisPoints: 500,//500 bp = 5%
-  symbol: 'PjM',
-  creators: [
-      {address: WALLET.publicKey, share: 100}
-  ]
-};
+let METAPLEX;
 
 async function uploadImage(filePath: string,fileName: string): Promise<string>  {
   console.log(`Step 1 - Uploading Image`);
@@ -82,8 +55,18 @@ async function mintNft(metadataUri: string, name: string, sellerFee: number, sym
   console.log(`   Minted NFT: https://explorer.solana.com/address/${nft.address}?cluster=devnet`);  
 }
 
-async function main() {
+export async function mint(CONFIG, WALLET) {
   console.log(`Minting ${CONFIG.imgName} to an NFT in Wallet ${WALLET.publicKey.toBase58()}.`);
+  CONFIG.creators = [
+    {address: WALLET.publicKey, share: 100}
+  ];
+  METAPLEX = Metaplex.make(SOLANA_CONNECTION)
+  .use(keypairIdentity(WALLET))
+  .use(bundlrStorage({
+      address: 'https://devnet.bundlr.network',
+      providerUrl: "https://api.devnet.solana.com",
+      timeout: 60000,
+  }));  
   //Step 1 - Upload Image
   const imgUri = await uploadImage(CONFIG.uploadPath, CONFIG.imgFileName);
   //Step 2 - Upload Metadata
@@ -91,5 +74,3 @@ async function main() {
   //Step 3 - Mint NFT
   mintNft(metadataUri, CONFIG.imgName, CONFIG.sellerFeeBasisPoints, CONFIG.symbol, CONFIG.creators);
 }
-
-main();
