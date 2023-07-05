@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import ElipsisMenu from '@components/ElipsisMenu'
 import elipsis from '@assets/icon-vertical-ellipsis.svg'
@@ -18,36 +18,41 @@ interface IProp {
 function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
   const [status, setStatus] = useState<boolean>()
   const [newColIndex, setNewColIndex] = useState<number>()
-  const [task, setTask] = useState<ITask>()
-  const [subtasks, setSubtasks] = useState<ISubtask[]>()
-  const [columns, setColumns] = useState<IColumn[]>()
-  const [completed, setCompleted] = useState(0)
+  //const [task, setTask] = useState<ITask>()
+  // const [subtasks, setSubtasks] = useState<ISubtask[]>()
+  //const [columns, setColumns] = useState<IColumn[]>()
+  //const [completed, setCompleted] = useState(0)
 
   const dispatch = useDispatch()
   const [isElipsisMenuOpen, setIsElipsisMenuOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const boards = useSelector((state: RootState) => state.boards)
   const board: IBoard | undefined = boards.find((board: IBoard) => board.isActive === true)
-  if (board) {
-    const columns = board.columns
-    setColumns(columns)
-    const col: IColumn | undefined = columns.find((col: IColumn, i: number) => i === colIndex)
-    if (col) {
-      const task: ITask | undefined = col.tasks.find((task: ITask, i: number) => i === taskIndex)
-      if (task) {
-        const subtasks = task.subtasks
-        setSubtasks(subtasks)
-        subtasks.forEach((subtask: ISubtask) => {
-          if (subtask.isCompleted) {
-            setCompleted(1)
-          }
-        })
-        setTask(task)
-        setStatus(Boolean(task.status))
-        setNewColIndex(columns.indexOf(col))
-      }
+
+  const columns = board?.columns
+
+  const col = columns?.find((col: IColumn, i: number) => i === colIndex)
+
+  const task = col?.tasks.find((task: ITask, i: number) => i === taskIndex)
+
+  const subtasks = task?.subtasks
+
+  let completed = 0
+  subtasks?.forEach((subtask: ISubtask) => {
+    if (subtask.isCompleted) {
+      completed++
     }
-  }
+  })
+
+  useEffect(() => {
+    setStatus(Boolean(task?.status))
+  }, [task])
+
+  useEffect(() => {
+    if (col) {
+      setNewColIndex(columns?.indexOf(col))
+    }
+  }, [col])
 
   const onChange = (e: any) => {
     setStatus(e.target.value)
