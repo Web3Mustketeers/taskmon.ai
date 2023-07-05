@@ -102,7 +102,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
       {/* @ts-ignore */}
       {isTaskModalOpen && <AddEditTaskModal setIsAddTaskModalOpen={setIsTaskModalOpen} type="add" device="mobile" />}
 
-      {isBoardModalOpen && <AddEditBoardModal setBoardType={setBoardType} type={boardType} setIsBoardModalOpen={setIsBoardModalOpen} />}
+      {isBoardModalOpen && <AddEditBoardModal type={boardType} setIsBoardModalOpen={setIsBoardModalOpen} />}
       {isDeleteModalOpen && (
         <DeleteModal
           setIsDeleteModalOpen={setIsDeleteModalOpen}
