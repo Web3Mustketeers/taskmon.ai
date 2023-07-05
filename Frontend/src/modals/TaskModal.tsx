@@ -1,38 +1,60 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import ElipsisMenu from '../components/ElipsisMenu'
-import elipsis from '../assets/icon-vertical-ellipsis.svg'
+import ElipsisMenu from '@components/ElipsisMenu'
+import elipsis from '@assets/icon-vertical-ellipsis.svg'
 import boardsSlice from '@redux/boardsSlice'
-import Subtask from '../components/Subtask'
+import Subtask from '@components/Subtask'
 import AddEditTaskModal from './AddEditTaskModal'
 import DeleteModal from './DeleteModal'
+import { IBoard, IColumn, ISubtask, ITask } from 'src/interfaces'
+import { RootState } from '@redux/store'
 
-function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }) {
+interface IProp {
+  taskIndex: number
+  colIndex: number
+  setIsTaskModalOpen: (action: boolean) => void
+}
+
+function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
+  const [status, setStatus] = useState<boolean>()
+  const [newColIndex, setNewColIndex] = useState<number>()
+  const [task, setTask] = useState<ITask>()
+  const [subtasks, setSubtasks] = useState<ISubtask[]>()
+  const [columns, setColumns] = useState<IColumn[]>()
+  const [completed, setCompleted] = useState(0)
+
   const dispatch = useDispatch()
   const [isElipsisMenuOpen, setIsElipsisMenuOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const boards = useSelector((state) => state.boards)
-  const board = boards.find((board) => board.isActive === true)
-  const columns = board.columns
-  const col = columns.find((col, i) => i === colIndex)
-  const task = col.tasks.find((task, i) => i === taskIndex)
-  const subtasks = task.subtasks
-
-  let completed = 0
-  subtasks.forEach((subtask) => {
-    if (subtask.isCompleted) {
-      completed++
+  const boards = useSelector((state: RootState) => state.boards)
+  const board: IBoard | undefined = boards.find((board: IBoard) => board.isActive === true)
+  if (board) {
+    const columns = board.columns
+    setColumns(columns)
+    const col: IColumn | undefined = columns.find((col: IColumn, i: number) => i === colIndex)
+    if (col) {
+      const task: ITask | undefined = col.tasks.find((task: ITask, i: number) => i === taskIndex)
+      if (task) {
+        const subtasks = task.subtasks
+        setSubtasks(subtasks)
+        subtasks.forEach((subtask: ISubtask) => {
+          if (subtask.isCompleted) {
+            setCompleted(1)
+          }
+        })
+        setTask(task)
+        setStatus(Boolean(task.status))
+        setNewColIndex(columns.indexOf(col))
+      }
     }
-  })
+  }
 
-  const [status, setStatus] = useState(task.status)
-  const [newColIndex, setNewColIndex] = useState(columns.indexOf(col))
-  const onChange = (e) => {
+  const onChange = (e: any) => {
     setStatus(e.target.value)
     setNewColIndex(e.target.selectedIndex)
   }
 
-  const onClose = (e) => {
+  const onClose = (e: any) => {
     if (e.target !== e.currentTarget) {
       return
     }
@@ -47,7 +69,7 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }) {
     setIsTaskModalOpen(false)
   }
 
-  const onDeleteBtnClick = (e) => {
+  const onDeleteBtnClick = (e: any) => {
     if (e.target.textContent === 'Delete') {
       dispatch(boardsSlice.actions.deleteTask({ taskIndex, colIndex }))
       setIsTaskModalOpen(false)
@@ -77,7 +99,7 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }) {
 
       <div className=" scrollbar-hide overflow-y-scroll max-h-[95vh]  my-auto  bg-white dark:bg-[#2b2c37] text-black dark:text-white font-bold shadow-md shadow-[#364e7e1a] max-w-md mx-auto  w-full px-8  py-8 rounded-xl">
         <div className=" relative flex   justify-between w-full items-center">
-          <h1 className=" text-lg">{task.title}</h1>
+          <h1 className=" text-lg">{task?.title}</h1>
 
           <img
             onClick={() => {
@@ -89,16 +111,16 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }) {
           />
           {isElipsisMenuOpen && <ElipsisMenu setOpenEditModal={setOpenEditModal} setOpenDeleteModal={setOpenDeleteModal} type="Task" />}
         </div>
-        <p className=" text-gray-500 font-[600] tracking-wide text-xs pt-6">{task.description}</p>
+        <p className=" text-gray-500 font-[600] tracking-wide text-xs pt-6">{task?.description}</p>
 
         <p className=" pt-6 text-gray-500 tracking-widest text-sm">
-          Subtasks ({completed} of {subtasks.length})
+          Subtasks ({completed} of {subtasks?.length})
         </p>
 
         {/* subtasks section */}
 
         <div className=" mt-3 space-y-2">
-          {subtasks.map((subtask, index) => {
+          {subtasks?.map((subtask: ISubtask, index: number) => {
             return <Subtask index={index} taskIndex={taskIndex} colIndex={colIndex} key={index} />
           })}
         </div>
@@ -109,9 +131,9 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }) {
           <label className="  text-sm dark:text-white text-gray-500">Current Status</label>
           <select
             className=" select-status flex-grow px-4 py-2 rounded-md text-sm bg-transparent focus:border-0  border-[1px] border-gray-300 focus:outline-[#635fc7] outline-none"
-            value={status}
+            value={String(status)}
             onChange={onChange}>
-            {columns.map((col, index) => (
+            {columns?.map((col: IColumn, index: number) => (
               <option className="status-options" key={index}>
                 {col.name}
               </option>
@@ -119,9 +141,11 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }) {
           </select>
         </div>
       </div>
-      {isDeleteModalOpen && <DeleteModal onDeleteBtnClick={onDeleteBtnClick} type="task" title={task.title} />}
+      {/* @ts-ignore */}
+      {isDeleteModalOpen && <DeleteModal onDeleteBtnClick={onDeleteBtnClick} type="task" title={task ? task.title : ''} />}
 
       {isAddTaskModalOpen && (
+        // @ts-ignore
         <AddEditTaskModal
           setIsAddTaskModalOpen={setIsAddTaskModalOpen}
           setIsTaskModalOpen={setIsTaskModalOpen}

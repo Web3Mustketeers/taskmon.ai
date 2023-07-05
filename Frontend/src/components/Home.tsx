@@ -4,6 +4,8 @@ import AddEditBoardModal from '@modals/AddEditBoardModal'
 import Column from './Column'
 import EmptyBoard from './EmptyBoard'
 import Sidebar from './Sidebar'
+import { RootState } from '@redux/store'
+import { IBoard, IColumn } from 'src/interfaces'
 
 function Home() {
   const [windowSize, setWindowSize] = useState([window.innerWidth, window.innerHeight])
@@ -22,9 +24,9 @@ function Home() {
 
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false)
 
-  const boards = useSelector((state) => state.boards)
-  const board = boards.find((board) => board.isActive === true)
-  const columns = board.columns
+  const boards = useSelector((state: RootState) => state.boards)
+  const board: IBoard | undefined = boards.find((board) => board.isActive === true)
+  const columns: IColumn[] | [] = board ? board.columns : []
 
   const [isSideBarOpen, setIsSideBarOpen] = useState(true)
 
@@ -37,8 +39,8 @@ function Home() {
       }>
       {windowSize[0] >= 768 && (
         <Sidebar
-          setIsBoardModalOpen={setIsBoardModalOpen}
-          isBoardModalOpen={isBoardModalOpen}
+          // setIsBoardModalOpen={setIsBoardModalOpen}
+          // isBoardModalOpen={isBoardModalOpen}
           isSideBarOpen={isSideBarOpen}
           setIsSideBarOpen={setIsSideBarOpen}
         />
@@ -48,7 +50,7 @@ function Home() {
 
       {columns.length > 0 ? (
         <>
-          {columns.map((col, index) => (
+          {columns?.map((col, index) => (
             <Column key={index} colIndex={index} />
           ))}
           <div

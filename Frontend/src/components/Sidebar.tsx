@@ -11,22 +11,30 @@ import hideSidebarIcon from '../assets/icon-hide-sidebar.svg'
 
 import boardsSlice from '@redux/boardsSlice'
 import AddEditBoardModal from '@modals/AddEditBoardModal'
+import { RootState } from '@redux/store'
 
-function Sidebar({ isSideBarOpen, setIsSideBarOpen }) {
+interface IProps {
+  isSideBarOpen: boolean
+  setIsSideBarOpen: any
+}
+
+function Sidebar({ isSideBarOpen, setIsSideBarOpen }: IProps) {
   const dispatch = useDispatch()
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false)
   const [colorTheme, setTheme] = useDarkMode()
   const [darkSide, setDarkSide] = useState(colorTheme === 'light' ? true : false)
 
-  const toggleDarkMode = (checked) => {
+  const toggleDarkMode = (checked: boolean) => {
+    console.log('ok')
+    //@ts-ignore
     setTheme(colorTheme)
     setDarkSide(checked)
   }
 
-  const boards = useSelector((state) => state.boards)
+  const boards = useSelector((state: RootState) => state.boards)
 
   const toggleSidebar = () => {
-    setIsSideBarOpen((curr) => !curr)
+    setIsSideBarOpen((curr: boolean) => !curr)
   }
 
   return (

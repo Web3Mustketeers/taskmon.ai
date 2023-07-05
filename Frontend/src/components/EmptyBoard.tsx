@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import AddEditBoardModal from '@modals/AddEditBoardModal'
 
-function EmptyBoard({ type }) {
+function EmptyBoard({ type }: { type: string }) {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false)
   return (
     <div className=" bg-white dark:bg-[#2b2c37] h-screen w-screen flex flex-col  items-center justify-center">

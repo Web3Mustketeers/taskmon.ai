@@ -4,11 +4,12 @@ import Header from '@components/Header'
 import Home from '@components/Home'
 import EmptyBoard from '@components/EmptyBoard'
 import boardsSlice from '@redux/boardsSlice'
+import { RootState } from '@redux/store'
 
 function App() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false)
   const dispatch = useDispatch()
-  const boards = useSelector((state) => state.boards)
+  const boards = useSelector((state: RootState) => state.boards)
   const activeBoard = boards.find((board) => board.isActive)
   if (!activeBoard && boards.length > 0) dispatch(boardsSlice.actions.setBoardActive({ index: 0 }))
   return (
@@ -17,6 +18,7 @@ function App() {
         {boards.length > 0 ? (
           <>
             <Header setIsBoardModalOpen={setIsBoardModalOpen} isBoardModalOpen={isBoardModalOpen} />
+            {/* @ts-ignore */}
             <Home setIsBoardModalOpen={setIsBoardModalOpen} isBoardModalOpen={isBoardModalOpen} />
           </>
         ) : (

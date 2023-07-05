@@ -6,18 +6,25 @@ import useDarkMode from '@hooks/useDarkMode'
 import darkIcon from '@assets/icon-dark-theme.svg'
 import lightIcon from '@assets/icon-light-theme.svg'
 import boardsSlice from '@redux/boardsSlice'
+import { RootState } from '@redux/store'
 
-function HeaderDropDown({ setOpenDropdown, setIsBoardModalOpen }) {
+interface IProps {
+  setOpenDropdown: (act: boolean) => void
+  setIsBoardModalOpen: (act: boolean) => void
+}
+
+function HeaderDropDown({ setOpenDropdown, setIsBoardModalOpen }: IProps) {
   const dispatch = useDispatch()
   const [colorTheme, setTheme] = useDarkMode()
   const [darkSide, setDarkSide] = useState(colorTheme === 'light' ? true : false)
 
-  const toggleDarkMode = (checked) => {
+  const toggleDarkMode = (checked: boolean) => {
+    //@ts-ignore
     setTheme(colorTheme)
     setDarkSide(checked)
   }
 
-  const boards = useSelector((state) => state.boards)
+  const boards = useSelector((state: RootState) => state.boards)
 
   return (
     <div

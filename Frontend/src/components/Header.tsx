@@ -10,8 +10,13 @@ import AddEditBoardModal from '@modals/AddEditBoardModal'
 import { useDispatch, useSelector } from 'react-redux'
 import DeleteModal from '@modals/DeleteModal'
 import boardsSlice from '@redux/boardsSlice'
+import { RootState } from '@redux/store'
+interface IProps {
+  setIsBoardModalOpen: (act: boolean) => void
+  isBoardModalOpen: boolean
+}
 
-function Header({ setIsBoardModalOpen, isBoardModalOpen }) {
+function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const [openDropdown, setOpenDropdown] = useState(false)
   const [isElipsisMenuOpen, setIsElipsisMenuOpen] = useState(false)
   const [boardType, setBoardType] = useState('add')
@@ -20,7 +25,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }) {
 
   const dispatch = useDispatch()
 
-  const boards = useSelector((state) => state.boards)
+  const boards = useSelector((state: RootState) => state.boards)
   const board = boards.find((board) => board.isActive)
 
   const onDropdownClick = () => {
@@ -38,7 +43,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }) {
     setIsElipsisMenuOpen(false)
   }
 
-  const onDeleteBtnClick = (e) => {
+  const onDeleteBtnClick = (e: any) => {
     if (e.target.textContent === 'Delete') {
       dispatch(boardsSlice.actions.deleteBoard())
       dispatch(boardsSlice.actions.setBoardActive({ index: 0 }))
@@ -56,7 +61,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }) {
           <img src={Logo} alt=" Logo " className=" h-6 w-6" />
           <h3 className=" md:text-4xl  hidden md:inline-block font-bold  font-sans">TaskmonAi</h3>
           <div className=" flex items-center ">
-            <h3 className=" truncate max-w-[200px] md:text-2xl text-xl font-bold md:ml-20 font-sans  ">{board.name}</h3>
+            <h3 className=" truncate max-w-[200px] md:text-2xl text-xl font-bold md:ml-20 font-sans  ">{board?.name}</h3>
             <img src={openDropdown ? iconUp : iconDown} alt=" dropdown icon" className=" w-3 ml-2 md:hidden" onClick={onDropdownClick} />
           </div>
         </div>
@@ -94,11 +99,17 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }) {
 
         {openDropdown && <HeaderDropDown setOpenDropdown={setOpenDropdown} setIsBoardModalOpen={setIsBoardModalOpen} />}
       </header>
+      {/* @ts-ignore */}
       {isTaskModalOpen && <AddEditTaskModal setIsAddTaskModalOpen={setIsTaskModalOpen} type="add" device="mobile" />}
 
       {isBoardModalOpen && <AddEditBoardModal setBoardType={setBoardType} type={boardType} setIsBoardModalOpen={setIsBoardModalOpen} />}
       {isDeleteModalOpen && (
-        <DeleteModal setIsDeleteModalOpen={setIsDeleteModalOpen} type="board" title={board.name} onDeleteBtnClick={onDeleteBtnClick} />
+        <DeleteModal
+          setIsDeleteModalOpen={setIsDeleteModalOpen}
+          type="board"
+          title={board ? board.name : ''}
+          onDeleteBtnClick={onDeleteBtnClick}
+        />
       )}
     </div>
   )
