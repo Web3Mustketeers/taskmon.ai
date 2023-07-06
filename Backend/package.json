@@ -1,12 +1,12 @@
 {
-  "name": "nestjs-typeorm-task-mgmt",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "api-taskmon.ai",
+  "version": "0.2.0",
+  "description": "Web2 apis for taskmon.ai",
+  "author": "Web3mustketeers",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf build",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "NODE_ENV=development nest start --watch",

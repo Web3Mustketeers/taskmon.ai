@@ -10,13 +10,18 @@ Task management RESTFul api built using [NestJS](https://github.com/nestjs/nest)
 
 ## Why I selected NestJS
 
-NestJS is one of the most popular server-side JavaScript frameworks of 2019 & 2020. As of June 2020 it has over 27k GitHub stars and over 250k weekly downloads on [npm](https://www.npmjs.com/package/@nestjs/core).
+NestJS is one of the most popular server-side JavaScript frameworks of 2019 & 2020. As of June 2020 it has over 27k GitHub stars and over
+250k weekly downloads on [npm](https://www.npmjs.com/package/@nestjs/core).
 
-In the recent years there are many frameworks on frontend like React, Angular, Vue which have improved developer productivity and have scalable architectures. However, on the server-side, while there are a lot of superb libraries, helpers and tools for Node, none of them effectively solve the main problem - the architecture.
+In the recent years there are many frameworks on frontend like React, Angular, Vue which have improved developer productivity and have
+scalable architectures. However, on the server-side, while there are a lot of superb libraries, helpers and tools for Node, none of them
+effectively solve the main problem - the architecture.
 
-Nest aims to provide an application architecture out of the box which allows for effortless creation of highly testable, scalable, loosely coupled and easily maintainable applications.
+Nest aims to provide an application architecture out of the box which allows for effortless creation of highly testable, scalable, loosely
+coupled and easily maintainable applications.
 
-Under the hood, Nest makes use of [Express](https://expressjs.com/), but also, provides compatibility with a wide range of other libraries, like e.g. Fastify, allowing for easy use of the myriad third-party plugins which are available.
+Under the hood, Nest makes use of [Express](https://expressjs.com/), but also, provides compatibility with a wide range of other libraries,
+like e.g. Fastify, allowing for easy use of the myriad third-party plugins which are available.
 
 ## About Task Management
 
@@ -47,7 +52,8 @@ Task management allows users to register, create tasks and manage them, major fe
 
 ### Technical documentation using [Compodoc](https://compodoc.app)
 
-As NestJS is heavily inspired by Angular, we can generate the documentation about project structure modules, controllers, services etc. I have generated the docks and uploaded to netlify
+As NestJS is heavily inspired by Angular, we can generate the documentation about project structure modules, controllers, services etc. I
+have generated the docks and uploaded to netlify
 
 https://task-mgmt-api-docs.netlify.app/modules.html
 
