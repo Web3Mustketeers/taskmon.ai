@@ -2,7 +2,7 @@
   "uploadPath": "./src/images/",
   "imgFileName": "fp_m.png",
   "imgType": "image/png",
-  "imgName": "featurepoint_low",
+  "imgName": "featurepoint_mid",
   "description": "Official web!",
   "attributes": [{ "trait_type": "FeaturePoint", "value": "4" }],
   "sellerFeeBasisPoints": 500,

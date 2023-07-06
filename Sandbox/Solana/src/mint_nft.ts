@@ -53,6 +53,7 @@ async function mintNft(metadataUri: string, name: string, sellerFee: number, sym
   });
   console.log(`   Success!🎉`);
   console.log(`   Minted NFT: https://explorer.solana.com/address/${nft.address}?cluster=devnet`);  
+  return nft.address;
 }
 
 export async function mint(CONFIG, WALLET) {
@@ -72,5 +73,6 @@ export async function mint(CONFIG, WALLET) {
   //Step 2 - Upload Metadata
   const metadataUri = await uploadMetadata(imgUri, CONFIG.imgType, CONFIG.imgName, CONFIG.description, CONFIG.attributes); 
   //Step 3 - Mint NFT
-  mintNft(metadataUri, CONFIG.imgName, CONFIG.sellerFeeBasisPoints, CONFIG.symbol, CONFIG.creators);
+  const result = await mintNft(metadataUri, CONFIG.imgName, CONFIG.sellerFeeBasisPoints, CONFIG.symbol, CONFIG.creators);
+  return result;
 }
