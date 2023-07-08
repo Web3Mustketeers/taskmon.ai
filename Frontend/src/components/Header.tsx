@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import Logo from '../assets/logo-mobile.svg'
-import iconDown from '../assets/icon-chevron-down.svg'
-import iconUp from '../assets/icon-chevron-up.svg'
-import elipsis from '../assets/icon-vertical-ellipsis.svg'
+import React, { useEffect, useState } from 'react'
+import Logo from '@assets/logo-mobile.svg'
+import iconDown from '@assets/icon-chevron-down.svg'
+import iconUp from '@assets/icon-chevron-up.svg'
+import elipsis from '@assets/icon-vertical-ellipsis.svg'
 import HeaderDropDown from './HeaderDropDown'
 import ElipsisMenu from './ElipsisMenu'
 import AddEditTaskModal from '@modals/AddEditTaskModal'
@@ -11,6 +11,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import DeleteModal from '@modals/DeleteModal'
 import boardsSlice from '@redux/boardsSlice'
 import { RootState } from '@redux/store'
+import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
+import { useWalletModal } from '@solana/wallet-adapter-react-ui'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { SigninMessage } from '../utils/SigninMessage'
+import bs58 from 'bs58'
+
 interface IProps {
   setIsBoardModalOpen: (act: boolean) => void
   isBoardModalOpen: boolean
@@ -22,11 +28,49 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const [boardType, setBoardType] = useState('add')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
-
+  const { data: session, status } = useSession()
+  const wallet = useWallet()
+  const walletModal = useWalletModal()
   const dispatch = useDispatch()
 
   const boards = useSelector((state: RootState) => state.boards)
   const board = boards.find((board) => board.isActive)
+
+  const handleSignIn = async () => {
+    try {
+      if (!wallet.connected) {
+        walletModal.setVisible(true)
+      }
+
+      const csrf = await getCsrfToken()
+      if (!wallet.publicKey || !csrf || !wallet.signMessage) return
+
+      const message = new SigninMessage({
+        domain: typeof window !== 'undefined' ? window.location.host : '',
+        publicKey: wallet.publicKey?.toBase58(),
+        statement: `Sign this message to sign in to the app.`,
+        nonce: csrf,
+      })
+
+      const data = new TextEncoder().encode(message.prepare())
+      const signature = await wallet.signMessage(data)
+      const serializedSignature = bs58.encode(signature)
+
+      signIn('credentials', {
+        message: JSON.stringify(message),
+        redirect: false,
+        signature: serializedSignature,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (wallet.connected && status === 'unauthenticated') {
+      handleSignIn()
+    }
+  }, [wallet.connected])
 
   const onDropdownClick = () => {
     setOpenDropdown((state) => !state)
@@ -71,9 +115,10 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
         <div className=" flex space-x-4 items-center md:space-x-6 ">
           <button
             className=" button hidden md:block "
-            onClick={() => {
-              setIsTaskModalOpen((prevState) => !prevState)
-            }}>
+            // onClick={() => {
+            //   setIsTaskModalOpen((prevState) => !prevState)
+            // }}>
+            onClick={handleSignIn}>
             + Add New Task
           </button>
           <button

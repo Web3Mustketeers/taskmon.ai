@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import crossIcon from '../assets/icon-cross.svg'
+import crossIcon from '@assets/icon-cross.svg'
 import boardsSlice from '@redux/boardsSlice'
 import { v4 as uuidv4 } from 'uuid'
 import { useDispatch, useSelector } from 'react-redux'
