@@ -8,7 +8,7 @@ on:
       - '*'
       - '**'
     paths:
-      - '.github/workflows/deploy.yml'
+      - 'Frontend/**'
   pull_request:
     branches: [ 'main' ]
   workflow_dispatch:
