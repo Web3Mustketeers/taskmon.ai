@@ -32,9 +32,6 @@ dependencies:
   '@nestjs/typeorm':
     specifier: ^7.1.5
     version: 7.1.5(@nestjs/common@10.0.5)(@nestjs/core@10.0.5)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typeorm@0.2.45)
-  '@prisma/client':
-    specifier: ^4.16.2
-    version: 4.16.2
   '@types/bcryptjs':
     specifier: ^2.4.2
     version: 2.4.2
@@ -2321,23 +2318,6 @@ packages:
   /@polka/url@0.5.0:
     resolution: {integrity: sha512-oZLYFEAzUKyi3SKnXvj32ZCEGH6RDnao7COuCVhDydMS9NrCSVXhM79VaKyP5+Zc33m0QXEd2DN3UkU7OsHcfw==}
     dev: true
-
-  /@prisma/client@4.16.2:
-    resolution: {integrity: sha512-qCoEyxv1ZrQ4bKy39GnylE8Zq31IRmm8bNhNbZx7bF2cU5aiCCnSa93J2imF88MBjn7J9eUQneNxUQVJdl/rPQ==}
-    engines: {node: '>=14.17'}
-    requiresBuild: true
-    peerDependencies:
-      prisma: '*'
-    peerDependenciesMeta:
-      prisma:
-        optional: true
-    dependencies:
-      '@prisma/engines-version': 4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81
-    dev: false
-
-  /@prisma/engines-version@4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81:
-    resolution: {integrity: sha512-q617EUWfRIDTriWADZ4YiWRZXCa/WuhNgLTVd+HqWLffjMSPzyM5uOWoauX91wvQClSKZU4pzI4JJLQ9Kl62Qg==}
-    dev: false
 
   /@sideway/address@4.1.4:
     resolution: {integrity: sha512-7vwq+rOHVWjyXxVlR76Agnvhy8I9rpzjosTESvmhNeXOXdZZB15Fl+TI9x1SiHZH5Jv2wTGduSxFDIaq0m3DUw==}
