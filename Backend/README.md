@@ -47,7 +47,7 @@ pnpm install
 ### Prerequisite for local/dev mode
 
 - Postgres should be running locally
-- And a db called `task-mgmt` should be created ( can be updated in `config/development.yml` )
+- And a db called `taskmon_ai` should be created ( can be updated in `config/development.yml` )
 
 ```bash
 # development - watch mode

@@ -18,4 +18,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
    * so that TYPEORM will create schema from entity definitions
    */
   synchronize: process.env.TYPEORM_SYNC || synchronize,
+  ssl: process.env.DB_SSL || dbConfig.ssl,
 }
