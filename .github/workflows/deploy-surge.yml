@@ -17,6 +17,7 @@ on:
 
 env:
   VITE_BASE_URL: 'http' #TODO:
+  domain: taskmon.surge.sh
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,37 +33,25 @@ jobs:
     runs-on: ubuntu-latest
     environment: surge
 
-    env:
-      domain: taskmon.surge.sh
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - uses: pnpm/action-setup@v2
         with:
-          node-version: 20
+          version: 8.6.6
 
-      - name: Get npm cache
-        id: npm-cache
-        run: echo "NPM_CACHE_DIR=$(pwd)/node_modules" >> "${GITHUB_OUTPUT}"
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
+      - uses: actions/setup-node@v3
         with:
-          path: ${{ steps.npm-cache.outputs.NPM_CACHE_DIR }}
-          key:
-            npm-${{github.workflow}}-${{ runner.os }}-${{
-            hashFiles('**package.json') }}
-          restore-keys: |
-            npm-${{github.workflow}}-${{ runner.os }}-${{ hashFiles('**package.json') }}
+          cache: 'pnpm'
+          node-version: 19
+          check-latest: true
 
       - name: Install dependencies
-        run: npm install --include=dev
+        run: pnpm install
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 
       - name: Extract Domain
         id: extract_domain

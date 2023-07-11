@@ -1,27 +1,6 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-
 ## Description
 
 Task management RESTFul api built using [NestJS](https://github.com/nestjs/nest) , TypeScript, TypeORM and PostgreSQL.
-
-## Why I selected NestJS
-
-NestJS is one of the most popular server-side JavaScript frameworks of 2019 & 2020. As of June 2020 it has over 27k GitHub stars and over
-250k weekly downloads on [npm](https://www.npmjs.com/package/@nestjs/core).
-
-In the recent years there are many frameworks on frontend like React, Angular, Vue which have improved developer productivity and have
-scalable architectures. However, on the server-side, while there are a lot of superb libraries, helpers and tools for Node, none of them
-effectively solve the main problem - the architecture.
-
-Nest aims to provide an application architecture out of the box which allows for effortless creation of highly testable, scalable, loosely
-coupled and easily maintainable applications.
-
-Under the hood, Nest makes use of [Express](https://expressjs.com/), but also, provides compatibility with a wide range of other libraries,
-like e.g. Fastify, allowing for easy use of the myriad third-party plugins which are available.
 
 ## About Task Management
 
@@ -60,7 +39,7 @@ https://task-mgmt-api-docs.netlify.app/modules.html
 ## Installation
 
 ```
-npm install
+pnpm install
 ```
 
 ## Running the app
@@ -72,19 +51,19 @@ npm install
 
 ```bash
 # development - watch mode
-$ npm run start:dev
+$ pnpm start:dev
 
 # production mode
-$ npm start
+$ pnpm start
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ pnpm test
 
 # e2e tests
-$ npm run test:e2e
+$ pnpm test:e2e
 
 ```
