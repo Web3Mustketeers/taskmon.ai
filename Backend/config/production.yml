@@ -1,4 +1,0 @@
-server:
-  origin: https://nextjs-task-mgmt.vercel.app/
-db:
-  synchronize: false
