@@ -1,0 +1,67 @@
+{
+  "private": true,
+  "description": "An example project for NextAuth.js with Next.js",
+  "repository": "https://github.com/nextauthjs/next-auth-example.git",
+  "bugs": {
+    "url": "https://github.com/nextauthjs/next-auth/issues"
+  },
+  "homepage": "https://next-auth-example.vercel.app",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Iain Collins <me@iaincollins.com>",
+  "contributors": [
+    "Balázs Orbán <info@balazsorban.com>",
+    "Nico Domino <yo@ndo.dev>",
+    "Lluis Agusti <hi@llu.lu>"
+  ],
+  "dependencies": {
+    "@solana-mobile/wallet-adapter-mobile": "^2.0.0",
+    "@solana/wallet-adapter-base": "^0.9.22",
+    "@solana/wallet-adapter-react": "^0.15.32",
+    "@solana/wallet-adapter-react-ui": "^0.9.31",
+    "@solana/wallet-adapter-wallets": "^0.19.18",
+    "@solana/web3.js": "^1.78.0",
+    "bs58": "^5.0.0",
+    "next": "latest",
+    "next-auth": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tweetnacl": "^1.0.3",
+    "@headlessui/react": "1.7.15",
+    "@reduxjs/toolkit": "1.9.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "14.0.0",
+    "@testing-library/user-event": "14.4.3",
+    "@types/lodash": "^4.14.195",
+    "@types/uuid": "^9.0.2",
+    "axios": "^1.4.0",
+    "lodash": "^4.17.21",
+    "react-redux": "8.1.1",
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "uuid": "^9.0.0",
+    "web-vitals": "3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.2",
+    "@types/react": "^18.2.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.25",
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.0.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
