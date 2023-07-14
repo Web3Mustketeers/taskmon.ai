@@ -1,3 +1,7 @@
+#server:
+#  origin: https://nextjs-task-mgmt.vercel.app/
+#db:
+#  synchronize: false
 db:
   host: 'nest-js-5295.8nk.cockroachlabs.cloud'
   username: 'hiro'
@@ -5,10 +9,4 @@ db:
   port: 26257
   database: 'taskmon_ai_test'
   ssl: true
-  synchronize: true
-
-jwt:
-  secret: 'secret123'
-
-server:
-  port: 1607
+  synchronize: false

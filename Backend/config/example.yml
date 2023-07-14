@@ -1,0 +1,27 @@
+#server:
+#  port: 3000
+#
+#db:
+#  type: 'postgres'
+#  port: 5432
+#  database: 'task-mgmt'
+#
+#jwt:
+#  expiresIn: 3600
+#
+
+db:
+  host: 'nest-js-5295.8nk.cockroachlabs.cloud'
+  username: 'hiro'
+  password: 'R_Z4ssy4hOAzHRXWB-6qNg'
+  port: 26257
+  database: 'taskmon_ai_test'
+  ssl: true
+
+server:
+  port: 1607
+#  origin: localhost
+
+jwt:
+#  secret: 'secret123'
+  expiresIn: 3600

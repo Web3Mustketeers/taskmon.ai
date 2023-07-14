@@ -3,12 +3,12 @@ db:
   username: 'hiro'
   password: 'R_Z4ssy4hOAzHRXWB-6qNg'
   port: 26257
-  database: 'taskmon_ai_test'
+  database: 'taskmon_ai'
   ssl: true
-  synchronize: true
-
-jwt:
-  secret: 'secret123'
 
 server:
   port: 1607
+#  origin: localhost
+
+jwt:
+  secret: 'secret123'
