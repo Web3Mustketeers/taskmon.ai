@@ -5,7 +5,6 @@ import { RootState } from "@redux/store";
 import Home from "@components/Home";
 import EmptyBoard from "@components/EmptyBoard";
 import Header from "@components/Header";
-import Head from "next/head";
 
 export default function IndexPage() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState<boolean>(false);
@@ -17,7 +16,7 @@ export default function IndexPage() {
     dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
   return (
     <>
-      <div className=" overflow-hidden  overflow-x-scroll">
+      <div className=" overflow-hidden  overflow-x-scroll relative">
         <>
           {boards.length > 0 ? (
             <>

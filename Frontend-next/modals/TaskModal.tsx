@@ -8,6 +8,7 @@ import AddEditTaskModal from "./AddEditTaskModal";
 import DeleteModal from "./DeleteModal";
 import { IBoard, IColumn, ISubtask, ITask } from "../interfaces";
 import { RootState } from "@redux/store";
+import Image from "next/image";
 
 interface IProp {
   taskIndex: number;
@@ -101,7 +102,7 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
   return (
     <div
       onClick={onClose}
-      className=" fixed right-0 top-0 px-2 py-4 overflow-scroll scrollbar-hide  z-50 left-0 bottom-0 justify-center items-center flex dropdown "
+      className=" fixed bg-red-400 w-full h-full right-0 top-0 px-2 py-4 overflow-scroll scrollbar-hide  z-50 left-0 bottom-0 justify-center items-center flex dropdown "
     >
       {/* MODAL SECTION */}
 
@@ -109,7 +110,7 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
         <div className=" relative flex   justify-between w-full items-center">
           <h1 className=" text-lg">{task?.title}</h1>
 
-          <img
+          <Image
             onClick={() => {
               setIsElipsisMenuOpen((prevState) => !prevState);
             }}

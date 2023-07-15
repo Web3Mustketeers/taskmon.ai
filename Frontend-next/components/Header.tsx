@@ -42,21 +42,17 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
       if (!wallet.connected) {
         walletModal.setVisible(true);
       }
-
       const csrf = await getCsrfToken();
       if (!wallet.publicKey || !csrf || !wallet.signMessage) return;
-
       const message = new SigninMessage({
         domain: typeof window !== "undefined" ? window.location.host : "",
         publicKey: wallet.publicKey?.toBase58(),
         statement: `Sign this message to sign in to the app.`,
         nonce: csrf,
       });
-
       const data = new TextEncoder().encode(message.prepare());
       const signature = await wallet.signMessage(data);
       const serializedSignature = bs58.encode(signature);
-
       signIn("credentials", {
         message: JSON.stringify(message),
         redirect: false,
@@ -99,7 +95,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   };
 
   return (
-    <div className=" p-4 fixed left-0 bg-white dark:bg-[#2b2c37] z-50 right-0 ">
+    <div className=" p-4 fixed left-0 bg-white dark:bg-[#2b2c37] z-20 right-0 ">
       <header className=" flex justify-between dark:text-white items-center  ">
         {/* Left Side  */}
         <div className=" flex items-center space-x-2  md:space-x-4">
@@ -108,9 +104,15 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
             TaskmonAi
           </h3>
           <div className=" flex items-center ">
-            <h3 className=" truncate max-w-[200px] md:text-2xl text-xl font-bold md:ml-20 font-sans  ">
+            {/* <h3 className=" truncate max-w-[200px] md:text-2xl text-xl font-bold md:ml-20 font-sans  ">
               {board?.name}
-            </h3>
+            </h3> */}
+            <button
+              className=" border border-[#635fc7] text-[#635fc7] py-2 px-4 rounded-full text-lg font-semibold hover:opacity-80 duration-200 hidden md:block "
+              onClick={handleSignIn}
+            >
+              Connect Wallet
+            </button>
             <Image
               src={openDropdown ? iconUp : iconDown}
               alt=" dropdown icon"
@@ -125,10 +127,10 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
         <div className=" flex space-x-4 items-center md:space-x-6 ">
           <button
             className=" button hidden md:block "
-            // onClick={() => {
-            //   setIsTaskModalOpen((prevState) => !prevState)
-            // }}>
-            onClick={handleSignIn}
+            onClick={() => {
+              setIsTaskModalOpen((prevState) => !prevState);
+            }}
+            //onClick={handleSignIn}
           >
             + Add New Task
           </button>
