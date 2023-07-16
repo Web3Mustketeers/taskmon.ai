@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import boardsSlice from "@redux/boardsSlice";
 import { RootState } from "@redux/store";
@@ -11,9 +11,18 @@ export default function IndexPage() {
   const dispatch = useDispatch();
   const boards = useSelector((state: RootState) => state.boards);
   const activeBoard = boards.find((board) => board.isActive);
+  const [hasMounted, setHasMounted] = useState(false);
 
   if (!activeBoard && boards.length > 0)
     dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
   return (
     <>
       <div className=" overflow-hidden  overflow-x-scroll relative">

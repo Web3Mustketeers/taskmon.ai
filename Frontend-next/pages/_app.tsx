@@ -15,7 +15,8 @@ import "./styles.css";
 import { Provider } from "react-redux";
 import store from "@redux/store";
 import CustomHead from "@components/CustomHead";
-
+import { ApolloProvider } from "@apollo/client";
+import client from "../apollo-client";
 // Use of the <SessionProvider> is mandatory to allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
 export default function App({ Component, pageProps }: AppProps) {
@@ -25,17 +26,19 @@ export default function App({ Component, pageProps }: AppProps) {
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <SessionProvider session={pageProps.session} refetchInterval={0}>
-            <Provider store={store}>
-              <CustomHead />
-              <Component {...pageProps} />
-            </Provider>
-          </SessionProvider>
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <ApolloProvider client={client}>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <SessionProvider session={pageProps.session} refetchInterval={0}>
+              <Provider store={store}>
+                <CustomHead />
+                <Component {...pageProps} />
+              </Provider>
+            </SessionProvider>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </ApolloProvider>
   );
 }

@@ -13,6 +13,17 @@ import boardsSlice from "@redux/boardsSlice";
 import AddEditBoardModal from "@modals/AddEditBoardModal";
 import { RootState } from "@redux/store";
 import Image from "next/image";
+import { useQuery, gql } from "@apollo/client";
+
+const QUERY = gql`
+  query Countries {
+    countries {
+      code
+      name
+      emoji
+    }
+  }
+`;
 
 interface IProps {
   isSideBarOpen: boolean;
@@ -38,6 +49,21 @@ function Sidebar({ isSideBarOpen, setIsSideBarOpen }: IProps) {
   const toggleSidebar = () => {
     setIsSideBarOpen((curr: boolean) => !curr);
   };
+
+  //apollo sample
+  const { data, loading, error } = useQuery(QUERY);
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  const countries = data.countries.slice(0, 4);
+  console.log(countries);
 
   return (
     <div>
