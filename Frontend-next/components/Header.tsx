@@ -34,7 +34,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const walletModal = useWalletModal();
   const dispatch = useDispatch();
 
-  const boards = useSelector((state: RootState) => state.boards);
+  const boards = useSelector((state: RootState) => state.boards.boardsList);
   const board = boards.find((board) => board.isActive);
 
   const handleSignIn = async () => {
@@ -86,8 +86,8 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
 
   const onDeleteBtnClick = (e: any) => {
     if (e.target.textContent === "Delete") {
-      dispatch(boardsSlice.actions.deleteBoard());
-      dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
+      //dispatch(boardsSlice.actions.deleteBoard());
+      //dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
       setIsDeleteModalOpen(false);
     } else {
       setIsDeleteModalOpen(false);

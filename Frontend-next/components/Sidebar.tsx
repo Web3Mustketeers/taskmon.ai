@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Switch } from "@headlessui/react";
 import boardIcon from "@assets/icon-board.svg";
@@ -13,17 +13,7 @@ import boardsSlice from "@redux/boardsSlice";
 import AddEditBoardModal from "@modals/AddEditBoardModal";
 import { RootState } from "@redux/store";
 import Image from "next/image";
-import { useQuery, gql } from "@apollo/client";
-
-const QUERY = gql`
-  query Countries {
-    countries {
-      code
-      name
-      emoji
-    }
-  }
-`;
+import { IBoard } from "interfaces";
 
 interface IProps {
   isSideBarOpen: boolean;
@@ -44,34 +34,33 @@ function Sidebar({ isSideBarOpen, setIsSideBarOpen }: IProps) {
     setDarkSide(checked);
   };
 
-  const boards = useSelector((state: RootState) => state.boards);
+  const boards: IBoard[] = useSelector(
+    (state: RootState) => state.boards.boardsList
+  );
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
+  );
 
   const toggleSidebar = () => {
     setIsSideBarOpen((curr: boolean) => !curr);
   };
 
-  //apollo sample
-  const { data, loading, error } = useQuery(QUERY);
-
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
-
-  if (error) {
-    console.error(error);
-    return null;
-  }
-
-  const countries = data.countries.slice(0, 4);
-  console.log(countries);
+  // useEffect(() => {
+  //   if (boards.length > 0) {
+  //     const selectIBoard = useSelector(
+  //       (state: RootState) => state.boards.selectedBoard
+  //     );
+  //     setSelectedBoard(selectIBoard);
+  //   }
+  // }, [boards]);
 
   return (
     <div>
       <div
         className={
           isSideBarOpen
-            ? `min-w-[261px] bg-white dark:bg-[#2b2c37]  fixed top-[72px] h-screen  items-center left-0 `
-            : ` bg-[#635FC7] dark:bg-[#2b2c37] dark:hover:bg-[#635FC7] top-auto bottom-10 justify-center items-center hover:opacity-80 cursor-pointer  p-0 transition duration-300 transform fixed  felx w-[56px] h-[48px] rounded-r-full  `
+            ? `min-w-[261px] bg-white dark:bg-[#2b2c37]  fixed top-[72px] h-screen  items-center left-0 z-20`
+            : ` bg-[#635FC7] dark:bg-[#2b2c37] dark:hover:bg-[#635FC7] top-auto bottom-10 justify-center items-center hover:opacity-80 cursor-pointer  p-0 transition duration-300 transform fixed felx w-[56px] h-[48px] rounded-r-full  `
         }
       >
         <div>
@@ -85,15 +74,16 @@ function Sidebar({ isSideBarOpen, setIsSideBarOpen }: IProps) {
 
               <div className="  dropdown-borad flex flex-col h-[70vh]  justify-between ">
                 <div>
-                  {boards.map((board, index) => (
+                  {boards.map((board: IBoard, index: number) => (
                     <div
                       className={` flex items-baseline space-x-2 px-5 mr-8 rounded-r-full duration-500 ease-in-out py-4 cursor-pointer hover:bg-[#635fc71a] hover:text-[#635fc7] dark:hover:bg-white dark:hover:text-[#635fc7] dark:text-white  ${
-                        board.isActive &&
+                        //  @ts-ignore
+                        board.id == selectedBoard.id &&
                         " bg-[#635fc7] rounded-r-full text-white mr-8 "
                       } `}
                       key={index}
                       onClick={() => {
-                        dispatch(boardsSlice.actions.setBoardActive({ index }));
+                        dispatch(boardsSlice.actions.setBoardActive(board));
                       }}
                     >
                       <Image

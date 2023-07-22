@@ -28,13 +28,13 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
   const [isElipsisMenuOpen, setIsElipsisMenuOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const boards = useSelector((state: RootState) => state.boards);
-  const board: IBoard | undefined = boards.find(
-    (board: IBoard) => board.isActive === true
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
   );
 
-  const columns = board?.columns;
-
-  const col = columns?.find((col: IColumn, i: number) => i === colIndex);
+  const columns = selectedBoard?.columns;
+  // @ts-ignore
+  const col = columns.find((col: IColumn, i: number) => i === colIndex);
 
   const task = col?.tasks.find((task: ITask, i: number) => i === taskIndex);
 
@@ -66,20 +66,20 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
     if (e.target !== e.currentTarget) {
       return;
     }
-    dispatch(
-      boardsSlice.actions.setTaskStatus({
-        taskIndex,
-        colIndex,
-        newColIndex,
-        status,
-      })
-    );
+    // dispatch(
+    //   boardsSlice.actions.setTaskStatus({
+    //     taskIndex,
+    //     colIndex,
+    //     newColIndex,
+    //     status,
+    //   })
+    // );
     setIsTaskModalOpen(false);
   };
 
   const onDeleteBtnClick = (e: any) => {
     if (e.target.textContent === "Delete") {
-      dispatch(boardsSlice.actions.deleteTask({ taskIndex, colIndex }));
+      //dispatch(boardsSlice.actions.deleteTask({ taskIndex, colIndex }));
       setIsTaskModalOpen(false);
       setIsDeleteModalOpen(false);
     } else {
@@ -160,6 +160,7 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
             value={String(status)}
             onChange={onChange}
           >
+            {/* @ts-ignore */}
             {columns?.map((col: IColumn, index: number) => (
               <option className="status-options" key={index}>
                 {col.name}

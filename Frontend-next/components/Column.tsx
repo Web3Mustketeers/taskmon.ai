@@ -6,7 +6,7 @@ import Task from "./Task";
 import { RootState } from "@redux/store";
 import { IBoard, IColumn } from "../interfaces";
 
-function Column({ colIndex }: { colIndex: number }) {
+function Column({ colIndex, column }: { colIndex: number; column: IColumn }) {
   const colors = [
     "bg-red-500",
     "bg-orange-500",
@@ -22,10 +22,9 @@ function Column({ colIndex }: { colIndex: number }) {
   const dispatch = useDispatch();
   const [color, setColor] = useState<string>();
   const boards: IBoard[] | undefined = useSelector(
-    (state: RootState) => state.boards
+    (state: RootState) => state.boards.boardsList
   );
   const board = boards?.find((board) => board.isActive === true);
-  const col = board?.columns.find((col: IColumn, i: number) => i === colIndex);
   useEffect(() => {
     setColor(shuffle(colors).pop());
   }, [dispatch]);
@@ -36,9 +35,9 @@ function Column({ colIndex }: { colIndex: number }) {
     );
 
     if (colIndex !== prevColIndex) {
-      dispatch(
-        boardsSlice.actions.dragTask({ colIndex, prevColIndex, taskIndex })
-      );
+      // dispatch(
+      //   boardsSlice.actions.dragTask({ colIndex, prevColIndex, taskIndex })
+      // );
     }
   };
 
@@ -54,11 +53,16 @@ function Column({ colIndex }: { colIndex: number }) {
     >
       <div className=" font-semibold flex  items-center  gap-2 tracking-widest md:tracking-[.2em] text-[#828fa3]">
         <div className={`rounded-full w-4 h-4 ${color} `} />
-        {col?.name} ({col?.tasks.length})
+        {column?.name} ({column?.tasks?.length})
       </div>
 
-      {col?.tasks.map((task, index) => (
-        <Task key={index} taskIndex={index} colIndex={colIndex} />
+      {column?.tasks?.map((task, index) => (
+        <Task
+          key={index}
+          taskIndex={index}
+          colIndex={colIndex}
+          currTask={task}
+        />
       ))}
     </div>
   );

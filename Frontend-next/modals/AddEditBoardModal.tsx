@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import crossIcon from "@assets/icon-cross.svg";
 import boardsSlice from "@redux/boardsSlice";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@redux/store";
-import { IColumn, ITask } from "../interfaces";
+import { IBoard, IColumn, ITask } from "../interfaces";
 import Image from "next/image";
+import { gql, useMutation } from "@apollo/client";
+import { CREATE_BOARD } from "queries/BoardQueries";
+import { CREATE_COLUMN } from "queries/ColumnQueries";
 
 interface INewCol {
   name: string;
@@ -21,24 +24,31 @@ function AddEditBoardModal({
   type: string;
 }) {
   const dispatch = useDispatch();
+  const [
+    createBoard,
+    { data: boardData, loading: loadingBoard, error: boardError },
+  ] = useMutation(CREATE_BOARD);
+  const [
+    createColumn,
+    { data: columnData, loading: loadingColumn, error: columnError },
+  ] = useMutation(CREATE_COLUMN);
+
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [name, setName] = useState<string | undefined>("");
-  const [newColumns, setNewColumns] = useState<INewCol[] | undefined>([
-    { name: "Todo", tasks: [], id: uuidv4() },
-    { name: "Doing", tasks: [], id: uuidv4() },
-  ]);
+  const [newColumns, setNewColumns] = useState<INewCol[] | undefined>([]);
   const [isValid, setIsValid] = useState(true);
-  const board = useSelector((state: RootState) => state.boards).find(
-    (board) => board.isActive
+  //@ts-ignore
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
   );
 
   if (type === "edit" && isFirstLoad) {
     setNewColumns(
-      board?.columns.map((col) => {
+      selectedBoard?.columns.map((col) => {
         return { ...col, id: uuidv4() };
       })
     );
-    setName(board?.name);
+    setName(selectedBoard?.name);
     setIsFirstLoad(false);
   }
 
@@ -74,13 +84,26 @@ function AddEditBoardModal({
   };
 
   const onSubmit = (type: string) => {
-    setIsBoardModalOpen(false);
-    if (type === "add") {
-      dispatch(boardsSlice.actions.addBoard({ name, newColumns }));
-    } else {
-      dispatch(boardsSlice.actions.editBoard({ name, newColumns }));
-    }
+    //setIsBoardModalOpen(false);
+    createBoard({ variables: { name: name, walletId: 1 } });
+
+    // newColumns?.forEach(column => {
+    //   createColumn({ variables: {name: column.name} })
+    // })
   };
+
+  useEffect(() => {
+    if (!loadingBoard && boardData && newColumns) {
+      console.log(boardData);
+      newColumns?.forEach((column) => {
+        createColumn({
+          variables: { name: column.name, boardId: boardData.id },
+        });
+      });
+
+      setNewColumns(undefined);
+    }
+  }, [loadingBoard]);
 
   return (
     <div

@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://countries.trevorblades.com",
+  uri: "https://taskmon.up.railway.app/graphql",
   cache: new InMemoryCache(),
 });
 

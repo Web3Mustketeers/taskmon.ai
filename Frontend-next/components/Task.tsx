@@ -2,17 +2,22 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import TaskModal from "@modals/TaskModal";
 import { RootState } from "@redux/store";
+import { IBoard, ITask } from "interfaces";
 
 function Task({
   colIndex,
   taskIndex,
+  currTask,
 }: {
   colIndex: number;
   taskIndex: number;
+  currTask: ITask;
 }) {
   const boards = useSelector((state: RootState) => state.boards);
-  const board = boards.find((board) => board.isActive === true);
-  const columns = board?.columns;
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
+  );
+  const columns = selectedBoard?.columns;
   const col = columns?.find((col, i) => i === colIndex);
   const task = col?.tasks.find((task, i) => i === taskIndex);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);

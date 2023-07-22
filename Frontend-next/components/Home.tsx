@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddEditBoardModal from "@modals/AddEditBoardModal";
 import Column from "./Column";
 import EmptyBoard from "./EmptyBoard";
@@ -7,9 +7,13 @@ import Sidebar from "./Sidebar";
 import { RootState } from "@redux/store";
 import useWindowSize from "@hooks/useWindowSize";
 import { IBoard, IColumn } from "interfaces";
+import { GET_BOARDS } from "queries/BoardQueries";
+import { useQuery } from "@apollo/client";
+import boardsSlice from "@redux/boardsSlice";
 
 function Home() {
   const size = useWindowSize();
+  const dispatch = useDispatch();
 
   const [windowSize, setWindowSize] = useState<number[]>([]);
 
@@ -35,11 +39,15 @@ function Home() {
 
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false);
 
-  const boards = useSelector((state: RootState) => state.boards);
-  const board: IBoard | undefined = boards.find(
-    (board: IBoard) => board.isActive === true
+  const boards: IBoard[] = useSelector(
+    (state: RootState) => state.boards.boardsList
   );
-  const columns: IColumn[] | [] = board ? board.columns : [];
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
+  );
+
+  //@ts-ignore
+  const columns: IColumn[] | [] = selectedBoard ? selectedBoard.columns : [];
 
   const [isSideBarOpen, setIsSideBarOpen] = useState(true);
 
@@ -65,7 +73,7 @@ function Home() {
       {columns.length > 0 ? (
         <>
           {columns?.map((col, index) => (
-            <Column key={index} colIndex={index} />
+            <Column key={index} colIndex={index} column={col} />
           ))}
           <div
             onClick={() => {
