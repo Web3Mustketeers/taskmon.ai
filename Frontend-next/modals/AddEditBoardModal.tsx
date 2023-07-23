@@ -7,8 +7,9 @@ import { RootState } from "@redux/store";
 import { IBoard, IColumn, ITask } from "../interfaces";
 import Image from "next/image";
 import { gql, useMutation } from "@apollo/client";
-import { CREATE_BOARD } from "queries/BoardQueries";
+import { CREATE_BOARD, GET_BOARDS } from "queries/BoardQueries";
 import { CREATE_COLUMN } from "queries/ColumnQueries";
+import client from "apollo-client";
 
 interface INewCol {
   name: string;
@@ -84,24 +85,41 @@ function AddEditBoardModal({
   };
 
   const onSubmit = (type: string) => {
-    //setIsBoardModalOpen(false);
-    createBoard({ variables: { name: name, walletId: 1 } });
+    createBoard({
+      variables: {
+        data: {
+          name,
+          walletId: 1,
+          isActive: false,
+        },
+      },
+    });
+  };
 
-    // newColumns?.forEach(column => {
-    //   createColumn({ variables: {name: column.name} })
-    // })
+  const proceedToCreateColumn = async () => {
+    const newColumnArr = newColumns ? newColumns : [];
+    for (let index = 0; index < newColumnArr.length; index++) {
+      const column = newColumnArr[index];
+
+      const columnAction = await createColumn({
+        variables: {
+          createColumnInput: {
+            name: column.name,
+            boardId: boardData.createBoard.id,
+          },
+        },
+      });
+    }
+    setNewColumns(undefined);
+    setIsBoardModalOpen(false);
+    await client.refetchQueries({
+      include: [GET_BOARDS],
+    });
   };
 
   useEffect(() => {
     if (!loadingBoard && boardData && newColumns) {
-      console.log(boardData);
-      newColumns?.forEach((column) => {
-        createColumn({
-          variables: { name: column.name, boardId: boardData.id },
-        });
-      });
-
-      setNewColumns(undefined);
+      proceedToCreateColumn();
     }
   }, [loadingBoard]);
 

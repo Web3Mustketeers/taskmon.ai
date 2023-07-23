@@ -34,7 +34,7 @@ export default function IndexPage() {
       dispatch(boardsSlice.actions.addBoardList(boardData.boards));
       dispatch(boardsSlice.actions.setBoardActive(boardData.boards[0]));
     }
-  }, [loadingboard]);
+  }, [loadingboard, boardData]);
 
   useEffect(() => {
     //if (!activeBoard && boards.length > 0)

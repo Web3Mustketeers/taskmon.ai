@@ -1,8 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 
 export const CREATE_BOARD = gql`
-  mutation CreateBoard($name: String!, $walletId: Int!) {
-    createBoard(name: $name, walletId: $walletId) {
+  mutation createBoard($data: CreateBoardInput!) {
+    createBoard(data: $data) {
       id
       name
     }
