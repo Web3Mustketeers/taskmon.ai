@@ -55,4 +55,5 @@ export interface ITask {
 export interface ISubtask {
   title: string;
   isCompleted: boolean;
+  id?: number;
 }

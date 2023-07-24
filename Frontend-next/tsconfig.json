@@ -21,7 +21,11 @@
       "@hooks/*": ["hooks/*"],
       "@redux/*": ["redux/*"],
       "@modals/*": ["modals/*"]
-    }
+    },
+
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "process.d.ts",

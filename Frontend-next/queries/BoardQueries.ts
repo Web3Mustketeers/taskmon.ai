@@ -9,6 +9,23 @@ export const CREATE_BOARD = gql`
   }
 `;
 
+export const UPDATE_BOARD = gql`
+  mutation updateBoard($id: Int!, $data: UpdateBoardInput!) {
+    updateBoard(id: $id, data: $data) {
+      id
+      name
+    }
+  }
+`;
+export const DELETE_BOARD = gql`
+  mutation deleteBoard($id: Int!) {
+    deleteBoard(id: $id) {
+      id
+      name
+    }
+  }
+`;
+
 export const GET_BOARDS = gql`
   query getBoards {
     boards {

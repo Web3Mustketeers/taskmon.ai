@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import crossIcon from "@assets/icon-cross.svg";
 import boardsSlice from "@redux/boardsSlice";
 import { RootState } from "@redux/store";
 import Image from "next/image";
+import { IColumn, ISubtask, ITask } from "interfaces";
+import { CREATE_TASK } from "queries/TaskQueries";
+import { useMutation } from "@apollo/client";
+import client from "apollo-client";
+import { GET_BOARDS } from "queries/BoardQueries";
+import { CREATE_SUBTASK } from "queries/SubTaskQueries";
 
 interface IProps {
   type: string;
@@ -28,26 +34,37 @@ function AddEditTaskModal({
   const [isValid, setIsValid] = useState(true);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const board = useSelector((state: RootState) => state.boards).find(
-    (board) => board.isActive
+  //@ts-ignore
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
   );
 
-  const columns = board?.columns;
-  const col = columns?.find((col, index) => index === prevColIndex);
-  const task = col ? col.tasks.find((task, index) => index === taskIndex) : [];
+  const [
+    createTask,
+    { data: taskData, loading: loadingTask, error: taskError },
+  ] = useMutation(CREATE_TASK);
+  const [
+    createSubTask,
+    { data: subTaskData, loading: loadingSubTask, error: subTaskError },
+  ] = useMutation(CREATE_SUBTASK);
+
+  const columns = selectedBoard?.columns;
+  const col = columns?.find(
+    (col: IColumn, index: number) => index === prevColIndex
+  );
+  const task = col
+    ? col.tasks.find((task: ITask, index: number) => index === taskIndex)
+    : [];
   const [status, setStatus] = useState(
     columns ? columns[prevColIndex].name : ""
   );
   const [newColIndex, setNewColIndex] = useState(prevColIndex);
-  const [subtasks, setSubtasks] = useState([
-    { title: "", isCompleted: false, id: uuidv4() },
-    { title: "", isCompleted: false, id: uuidv4() },
-  ]);
+  const [subtasks, setSubtasks] = useState<ISubtask[]>([]);
 
-  const onChangeSubtasks = (id: string, newValue: string) => {
+  const onChangeSubtasks = (index: number, newValue: string) => {
     setSubtasks((prevState) => {
       const newState = [...prevState];
-      const subtask = newState.find((subtask) => subtask.id === id);
+      const subtask = newState[index];
       if (subtask) subtask.title = newValue;
       return newState;
     });
@@ -86,42 +103,56 @@ function AddEditTaskModal({
     setIsFirstLoad(false);
   }
 
-  const onDelete = (id: string) => {
-    setSubtasks((prevState) => prevState.filter((el) => el.id !== id));
+  const onDelete = (index: number) => {
+    setSubtasks((prevState) => prevState.filter((el, idx) => index == idx));
   };
 
   const onSubmit = (type: string) => {
-    if (type === "add") {
-      dispatch(
-        boardsSlice.actions.addTask({
+    createTask({
+      variables: {
+        createTaskInput: {
           title,
+          columnId: columns[newColIndex].id,
           description,
-          subtasks,
-          status,
-          newColIndex,
-        })
-      );
-    } else {
-      dispatch(
-        boardsSlice.actions.editTask({
-          title,
-          description,
-          subtasks,
-          status,
-          taskIndex,
-          prevColIndex,
-          newColIndex,
-        })
-      );
-    }
+        },
+      },
+    });
   };
+
+  const proceedToCreateSubTasks = async () => {
+    const newSubTasks = subtasks ? subtasks : [];
+    for (let index = 0; index < newSubTasks.length; index++) {
+      const currSubTask = newSubTasks[index];
+
+      const subTask = await createSubTask({
+        variables: {
+          createSubTaskInput: {
+            title: currSubTask.title,
+            taskId: taskData.createTask.id,
+            isCompleted: currSubTask.isCompleted,
+          },
+        },
+      });
+    }
+
+    setIsAddTaskModalOpen(false);
+    await client.refetchQueries({
+      include: [GET_BOARDS],
+    });
+  };
+
+  useEffect(() => {
+    if (!loadingTask && taskData) {
+      proceedToCreateSubTasks();
+    }
+  }, [loadingTask, taskData, taskError]);
 
   return (
     <div
       className={
         device === "mobile"
           ? "  py-6 px-6 pb-40  absolute   left-0 flex  right-0 bottom-[-100vh] top-0 dropdown "
-          : "  py-6 px-6 pb-40  absolute   left-0 flex  right-0 bottom-0 top-0 dropdown "
+          : "  py-6 px-6 pb-40  absolute  left-0 flex  right-0 bottom-0 top-0 dropdown "
       }
       onClick={(e) => {
         if (e.target !== e.currentTarget) {
@@ -133,7 +164,7 @@ function AddEditTaskModal({
       {/* Modal Section */}
 
       <div
-        className=" scrollbar-hide overflow-y-scroll max-h-[95vh]  my-auto  bg-white dark:bg-[#2b2c37] text-black dark:text-white font-bold
+        className=" scrollbar-hide overflow-y-scroll  max-h-[95vh]  my-auto  bg-white dark:bg-[#2b2c37] text-black dark:text-white font-bold
        shadow-md shadow-[#364e7e1a] max-w-md mx-auto  w-full px-8  py-8 rounded-xl"
       >
         <h3 className=" text-lg ">
@@ -183,7 +214,7 @@ function AddEditTaskModal({
             <div key={index} className=" flex items-center w-full ">
               <input
                 onChange={(e) => {
-                  onChangeSubtasks(subtask.id, e.target.value);
+                  onChangeSubtasks(index, e.target.value);
                 }}
                 type="text"
                 value={subtask.title}
@@ -194,7 +225,7 @@ function AddEditTaskModal({
                 src={crossIcon}
                 alt="icon"
                 onClick={() => {
-                  onDelete(subtask.id);
+                  onDelete(index);
                 }}
                 className=" m-4 cursor-pointer "
               />
@@ -206,7 +237,7 @@ function AddEditTaskModal({
             onClick={() => {
               setSubtasks((state) => [
                 ...state,
-                { title: "", isCompleted: false, id: uuidv4() },
+                { title: "", isCompleted: false },
               ]);
             }}
           >
@@ -224,7 +255,7 @@ function AddEditTaskModal({
             onChange={onChangeStatus}
             className=" select-status flex-grow px-4 py-2 rounded-md text-sm bg-transparent focus:border-0  border-[1px] border-gray-300 focus:outline-[#635fc7] outline-none"
           >
-            {columns?.map((column, index) => (
+            {columns?.map((column: IColumn, index: number) => (
               <option key={index}>{column.name}</option>
             ))}
           </select>
@@ -233,8 +264,8 @@ function AddEditTaskModal({
               const isValid = validate();
               if (isValid) {
                 onSubmit(type);
-                setIsAddTaskModalOpen(false);
-                type === "edit" && setIsTaskModalOpen(false);
+
+                type === "edit";
               }
             }}
             className=" w-full items-center text-white bg-[#635fc7] py-2 rounded-full "

@@ -7,9 +7,10 @@ import { RootState } from "@redux/store";
 import { IBoard, IColumn, ITask } from "../interfaces";
 import Image from "next/image";
 import { gql, useMutation } from "@apollo/client";
-import { CREATE_BOARD, GET_BOARDS } from "queries/BoardQueries";
-import { CREATE_COLUMN } from "queries/ColumnQueries";
+import { CREATE_BOARD, GET_BOARDS, UPDATE_BOARD } from "queries/BoardQueries";
+import { CREATE_COLUMN, UPDATE_COLUMN } from "queries/ColumnQueries";
 import client from "apollo-client";
+import { typeFromAST } from "graphql";
 
 interface INewCol {
   name: string;
@@ -30,9 +31,26 @@ function AddEditBoardModal({
     { data: boardData, loading: loadingBoard, error: boardError },
   ] = useMutation(CREATE_BOARD);
   const [
+    updateBoard,
+    {
+      data: updateBoardData,
+      loading: loadingUpdateBoard,
+      error: updateBoardError,
+    },
+  ] = useMutation(UPDATE_BOARD);
+
+  const [
     createColumn,
     { data: columnData, loading: loadingColumn, error: columnError },
   ] = useMutation(CREATE_COLUMN);
+  const [
+    updateColumn,
+    {
+      data: updateColumnData,
+      loading: loadingUpdateColumn,
+      error: updateColumnError,
+    },
+  ] = useMutation(UPDATE_COLUMN);
 
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [name, setName] = useState<string | undefined>("");
@@ -44,10 +62,10 @@ function AddEditBoardModal({
   );
 
   if (type === "edit" && isFirstLoad) {
+    //console.log(selectedBoard?.columns);
     setNewColumns(
-      selectedBoard?.columns.map((col) => {
-        return { ...col, id: uuidv4() };
-      })
+      //@ts-ignore
+      selectedBoard?.columns
     );
     setName(selectedBoard?.name);
     setIsFirstLoad(false);
@@ -69,14 +87,23 @@ function AddEditBoardModal({
     return true;
   };
 
-  const onChange = (id: string, newValue: string) => {
+  const onChange = (id: number, newValue: string) => {
     setNewColumns((prevState) => {
-      const newState = prevState ? [...prevState] : [];
-      const column = newState.find((col: INewCol) => col.id === id);
+      let newState = prevState ? [...prevState] : [];
+      const column = { ...newState[id] };
       if (column) column.name = newValue;
+      newState[id] = column;
       return newState;
     });
   };
+  // const onChange = (id: string, newValue: string) => {
+  //   setNewColumns((prevState) => {
+  //     const newState = prevState ? [...prevState] : [];
+  //     const column = newState.find((col: INewCol) => col.id === id);
+  //     if (column) column.name = newValue;
+  //     return newState;
+  //   });
+  // };
 
   const onDelete = (id: string) => {
     setNewColumns((prevState) =>
@@ -85,15 +112,27 @@ function AddEditBoardModal({
   };
 
   const onSubmit = (type: string) => {
-    createBoard({
-      variables: {
-        data: {
-          name,
-          walletId: 1,
-          isActive: false,
+    if (type === "add") {
+      createBoard({
+        variables: {
+          data: {
+            name,
+            walletId: 1,
+            isActive: false,
+          },
         },
-      },
-    });
+      });
+    } else {
+      updateBoard({
+        variables: {
+          id: selectedBoard?.id,
+          data: {
+            name,
+            isActive: false,
+          },
+        },
+      });
+    }
   };
 
   const proceedToCreateColumn = async () => {
@@ -117,11 +156,38 @@ function AddEditBoardModal({
     });
   };
 
+  const proceedToUpdateColumn = async () => {
+    const newColumnArr = newColumns ? newColumns : [];
+    for (let index = 0; index < newColumnArr.length; index++) {
+      const column = newColumnArr[index];
+
+      const columnAction = await updateColumn({
+        variables: {
+          updateColumnInput: {
+            id: Number(column.id),
+            name: column.name,
+          },
+        },
+      });
+    }
+    setNewColumns(undefined);
+    setIsBoardModalOpen(false);
+    await client.refetchQueries({
+      include: [GET_BOARDS],
+    });
+  };
+
   useEffect(() => {
-    if (!loadingBoard && boardData && newColumns) {
+    if (!loadingBoard && boardData && newColumns && type === "add") {
       proceedToCreateColumn();
     }
   }, [loadingBoard]);
+
+  useEffect(() => {
+    if (!loadingUpdateBoard && updateBoardData && type != "add") {
+      proceedToUpdateColumn();
+    }
+  }, [loadingUpdateBoard]);
 
   return (
     <div
@@ -168,7 +234,7 @@ function AddEditBoardModal({
               <input
                 className=" bg-transparent flex-grow px-4 py-2 rounded-md text-sm  border-[0.5px] border-gray-600 focus:outline-[#635fc7] outline-[1px]  "
                 onChange={(e) => {
-                  onChange(column.id, e.target.value);
+                  onChange(index, e.target.value);
                 }}
                 type="text"
                 value={column.name}
@@ -184,18 +250,20 @@ function AddEditBoardModal({
             </div>
           ))}
           <div>
-            <button
-              className=" w-full items-center hover:opacity-70 dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
-              onClick={() => {
-                setNewColumns((state) => [
-                  // @ts-ignore
-                  ...state,
-                  { name: "", tasks: [], id: uuidv4() },
-                ]);
-              }}
-            >
-              + Add New Column
-            </button>
+            {type == "add" && (
+              <button
+                className=" w-full items-center hover:opacity-70 dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
+                onClick={() => {
+                  setNewColumns((state) => [
+                    // @ts-ignore
+                    ...state,
+                    { name: "", tasks: [] },
+                  ]);
+                }}
+              >
+                + Add New Column
+              </button>
+            )}
             <button
               onClick={() => {
                 const isValid = validate();

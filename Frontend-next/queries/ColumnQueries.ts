@@ -8,3 +8,12 @@ export const CREATE_COLUMN = gql`
     }
   }
 `;
+
+export const UPDATE_COLUMN = gql`
+  mutation updateColumn($updateColumnInput: UpdateColumnInput!) {
+    updateColumn(updateColumnInput: $updateColumnInput) {
+      id
+      name
+    }
+  }
+`;

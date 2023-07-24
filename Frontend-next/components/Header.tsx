@@ -17,6 +17,9 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { SigninMessage } from "../utils/SigninMessage";
 import bs58 from "bs58";
 import Image from "next/image";
+import { DELETE_BOARD, GET_BOARDS } from "queries/BoardQueries";
+import { useMutation } from "@apollo/client";
+import client from "apollo-client";
 
 interface IProps {
   setIsBoardModalOpen: (act: boolean) => void;
@@ -35,7 +38,15 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const dispatch = useDispatch();
 
   const boards = useSelector((state: RootState) => state.boards.boardsList);
-  const board = boards.find((board) => board.isActive);
+  //@ts-ignore
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
+  );
+
+  const [
+    deleteBoard,
+    { data: boardData, loading: loadingBoard, error: boardError },
+  ] = useMutation(DELETE_BOARD);
 
   const handleSignIn = async () => {
     try {
@@ -84,11 +95,19 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
     setIsElipsisMenuOpen(false);
   };
 
-  const onDeleteBtnClick = (e: any) => {
+  const onDeleteBtnClick = async (e: any) => {
     if (e.target.textContent === "Delete") {
-      //dispatch(boardsSlice.actions.deleteBoard());
-      //dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
+      deleteBoard({
+        variables: {
+          id: selectedBoard.id,
+        },
+      });
+
       setIsDeleteModalOpen(false);
+      await client.resetStore();
+      await client.refetchQueries({
+        include: [GET_BOARDS],
+      });
     } else {
       setIsDeleteModalOpen(false);
     }
@@ -188,7 +207,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
         <DeleteModal
           setIsDeleteModalOpen={setIsDeleteModalOpen}
           type="board"
-          title={board ? board.name : ""}
+          title={selectedBoard ? selectedBoard.name : ""}
           onDeleteBtnClick={onDeleteBtnClick}
         />
       )}
