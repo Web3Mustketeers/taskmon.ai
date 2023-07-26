@@ -9,6 +9,11 @@ import DeleteModal from "./DeleteModal";
 import { IBoard, IColumn, ISubtask, ITask } from "../interfaces";
 import { RootState } from "@redux/store";
 import Image from "next/image";
+import client from "apollo-client";
+import { GET_BOARDS } from "queries/BoardQueries";
+import { useMutation } from "@apollo/client";
+import { DELETE_TASK } from "queries/TaskQueries";
+import { DELETE_SUBTASK } from "queries/SubTaskQueries";
 
 interface IProp {
   taskIndex: number;
@@ -31,6 +36,24 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
   const selectedBoard: IBoard | undefined = useSelector(
     (state: RootState) => state.boards.selectedBoard
   );
+
+  const [
+    deleteTask,
+    {
+      data: deleteTaskData,
+      loading: loadingDeleteTask,
+      error: deleteTaskError,
+    },
+  ] = useMutation(DELETE_TASK);
+
+  const [
+    deleteSubTask,
+    {
+      data: deleteSubTaskData,
+      loading: loadingDeleteSubTask,
+      error: deleteSubTaskError,
+    },
+  ] = useMutation(DELETE_SUBTASK);
 
   const columns = selectedBoard?.columns;
   // @ts-ignore
@@ -66,22 +89,37 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
     if (e.target !== e.currentTarget) {
       return;
     }
-    // dispatch(
-    //   boardsSlice.actions.setTaskStatus({
-    //     taskIndex,
-    //     colIndex,
-    //     newColIndex,
-    //     status,
-    //   })
-    // );
+
     setIsTaskModalOpen(false);
   };
 
-  const onDeleteBtnClick = (e: any) => {
+  const proceedToDeleteSubTasks = async () => {
+    const newSubTasks: ISubtask[] = subtasks ? subtasks : [];
+    for (let index = 0; index < newSubTasks.length; index++) {
+      const currSubTask = newSubTasks[index];
+
+      const subTask = await deleteSubTask({
+        variables: {
+          id: currSubTask.id,
+        },
+      });
+    }
+    //await client.resetStore();
+    await client.refetchQueries({
+      include: [GET_BOARDS],
+    });
+    setIsTaskModalOpen(false);
+    setIsDeleteModalOpen(false);
+  };
+
+  const onDeleteBtnClick = async (e: any) => {
     if (e.target.textContent === "Delete") {
-      //dispatch(boardsSlice.actions.deleteTask({ taskIndex, colIndex }));
-      setIsTaskModalOpen(false);
-      setIsDeleteModalOpen(false);
+      deleteTask({
+        variables: {
+          id: task?.id,
+        },
+      });
+      proceedToDeleteSubTasks();
     } else {
       setIsDeleteModalOpen(false);
     }
@@ -174,6 +212,7 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
         // @ts-ignore
         <DeleteModal
           onDeleteBtnClick={onDeleteBtnClick}
+          setIsDeleteModalOpen={setIsDeleteModalOpen}
           type="task"
           title={task ? task.title : ""}
         />

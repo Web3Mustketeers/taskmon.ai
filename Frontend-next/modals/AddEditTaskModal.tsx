@@ -6,11 +6,11 @@ import boardsSlice from "@redux/boardsSlice";
 import { RootState } from "@redux/store";
 import Image from "next/image";
 import { IColumn, ISubtask, ITask } from "interfaces";
-import { CREATE_TASK } from "queries/TaskQueries";
+import { CREATE_TASK, UPDATE_TASK } from "queries/TaskQueries";
 import { useMutation } from "@apollo/client";
 import client from "apollo-client";
 import { GET_BOARDS } from "queries/BoardQueries";
-import { CREATE_SUBTASK } from "queries/SubTaskQueries";
+import { CREATE_SUBTASK, UPDATE_SUBTASK } from "queries/SubTaskQueries";
 
 interface IProps {
   type: string;
@@ -44,9 +44,27 @@ function AddEditTaskModal({
     { data: taskData, loading: loadingTask, error: taskError },
   ] = useMutation(CREATE_TASK);
   const [
+    updateTask,
+    {
+      data: updateTaskData,
+      loading: loadingUpdateTask,
+      error: updateTaskError,
+    },
+  ] = useMutation(UPDATE_TASK);
+
+  const [
     createSubTask,
     { data: subTaskData, loading: loadingSubTask, error: subTaskError },
   ] = useMutation(CREATE_SUBTASK);
+
+  const [
+    updateSubTask,
+    {
+      data: updateSubTaskData,
+      loading: loadingUpdateSubTask,
+      error: updateSubTaskError,
+    },
+  ] = useMutation(UPDATE_SUBTASK);
 
   const columns = selectedBoard?.columns;
   const col = columns?.find(
@@ -54,7 +72,7 @@ function AddEditTaskModal({
   );
   const task = col
     ? col.tasks.find((task: ITask, index: number) => index === taskIndex)
-    : [];
+    : {};
   const [status, setStatus] = useState(
     columns ? columns[prevColIndex].name : ""
   );
@@ -64,8 +82,9 @@ function AddEditTaskModal({
   const onChangeSubtasks = (index: number, newValue: string) => {
     setSubtasks((prevState) => {
       const newState = [...prevState];
-      const subtask = newState[index];
+      const subtask = { ...newState[index] };
       if (subtask) subtask.title = newValue;
+      newState[index] = subtask;
       return newState;
     });
   };
@@ -90,12 +109,7 @@ function AddEditTaskModal({
   };
 
   if (type === "edit" && isFirstLoad) {
-    setSubtasks(
-      // @ts-ignore
-      task.subtasks.map((subtask) => {
-        return { ...subtask, id: uuidv4() };
-      })
-    );
+    setSubtasks(task.subtasks);
     //@ts-ignore
     setTitle(task.title);
     //@ts-ignore
@@ -108,15 +122,30 @@ function AddEditTaskModal({
   };
 
   const onSubmit = (type: string) => {
-    createTask({
-      variables: {
-        createTaskInput: {
-          title,
-          columnId: columns[newColIndex].id,
-          description,
+    if (type == "add") {
+      createTask({
+        variables: {
+          createTaskInput: {
+            title,
+            columnId: columns[newColIndex].id,
+            description,
+          },
         },
-      },
-    });
+      });
+    } else {
+      //update task
+
+      updateTask({
+        variables: {
+          updateTaskInput: {
+            id: task.id,
+            title,
+            columnId: columns[newColIndex].id,
+            description,
+          },
+        },
+      });
+    }
   };
 
   const proceedToCreateSubTasks = async () => {
@@ -141,11 +170,40 @@ function AddEditTaskModal({
     });
   };
 
+  const proceedToUpdateSubTasks = async () => {
+    const newSubTasks = subtasks ? subtasks : [];
+    for (let index = 0; index < newSubTasks.length; index++) {
+      const currSubTask = newSubTasks[index];
+
+      const subTask = await updateSubTask({
+        variables: {
+          updateSubTaskInput: {
+            id: currSubTask.id,
+            title: currSubTask.title,
+            taskId: task.id,
+            isCompleted: currSubTask.isCompleted,
+          },
+        },
+      });
+    }
+
+    setIsAddTaskModalOpen(false);
+    await client.refetchQueries({
+      include: [GET_BOARDS],
+    });
+  };
+
   useEffect(() => {
     if (!loadingTask && taskData) {
       proceedToCreateSubTasks();
     }
   }, [loadingTask, taskData, taskError]);
+
+  useEffect(() => {
+    if (!loadingUpdateTask && updateTaskData) {
+      proceedToUpdateSubTasks();
+    }
+  }, [loadingUpdateTask, updateTaskData, updateTaskError]);
 
   return (
     <div
@@ -232,17 +290,19 @@ function AddEditTaskModal({
             </div>
           ))}
 
-          <button
-            className=" w-full items-center dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
-            onClick={() => {
-              setSubtasks((state) => [
-                ...state,
-                { title: "", isCompleted: false },
-              ]);
-            }}
-          >
-            + Add New Subtask
-          </button>
+          {type == "add" && (
+            <button
+              className=" w-full items-center dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
+              onClick={() => {
+                setSubtasks((state) => [
+                  ...state,
+                  { title: "", isCompleted: false },
+                ]);
+              }}
+            >
+              + Add New Subtask
+            </button>
+          )}
         </div>
 
         {/* current Status  */}

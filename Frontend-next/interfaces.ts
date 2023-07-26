@@ -16,6 +16,8 @@ export interface IBoard {
       description: string;
       status: string;
       subtasks: {
+        id: number;
+        taskId: number;
         title: string;
         isCompleted: boolean;
       }[];

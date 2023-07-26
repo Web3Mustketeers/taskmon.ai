@@ -46,6 +46,7 @@ export const GET_BOARDS = gql`
           id
           title
           subtasks {
+            id
             isCompleted
             taskId
             title
