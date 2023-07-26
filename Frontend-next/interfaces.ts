@@ -8,8 +8,12 @@ export interface IBoard {
   __typename: string;
   columns: {
     name: string;
+    isActive: boolean;
+    createdAt: string;
     id: number;
+    updatedAt: string;
     boardId: number;
+    __typename: string;
     tasks: {
       id: number;
       title: string;
@@ -34,10 +38,13 @@ export interface IColumn {
   boardId: number;
   __typename: string;
   tasks: {
+    id: number;
     title: string;
     description: string;
     status: string;
     subtasks: {
+      id: number;
+      taskId: number;
       title: string;
       isCompleted: boolean;
     }[];

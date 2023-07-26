@@ -36,10 +36,10 @@ export default function IndexPage() {
     }
   }, [loadingboard, boardData]);
 
-  useEffect(() => {
-    //if (!activeBoard && boards.length > 0)
-    // dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
-  }, [boards]);
+  // useEffect(() => {
+  //   //if (!activeBoard && boards.length > 0)
+  //   // dispatch(boardsSlice.actions.setBoardActive({ index: 0 }));
+  // }, [boards]);
 
   if (!hasMounted) {
     return null;

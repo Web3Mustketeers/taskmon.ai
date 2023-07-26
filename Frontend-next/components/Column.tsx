@@ -5,6 +5,8 @@ import boardsSlice from "@redux/boardsSlice";
 import Task from "./Task";
 import { RootState } from "@redux/store";
 import { IBoard, IColumn } from "../interfaces";
+import { UPDATE_TASK } from "queries/TaskQueries";
+import { useMutation } from "@apollo/client";
 
 function Column({ colIndex, column }: { colIndex: number; column: IColumn }) {
   const colors = [
@@ -19,25 +21,48 @@ function Column({ colIndex, column }: { colIndex: number; column: IColumn }) {
     "bg-sky-500",
   ];
 
+  const [
+    updateTask,
+    {
+      data: updateTaskData,
+      loading: loadingUpdateTask,
+      error: updateTaskError,
+    },
+  ] = useMutation(UPDATE_TASK);
+
   const dispatch = useDispatch();
   const [color, setColor] = useState<string>();
+
   const boards: IBoard[] | undefined = useSelector(
     (state: RootState) => state.boards.boardsList
   );
+
   const board = boards?.find((board) => board.isActive === true);
   useEffect(() => {
     setColor(shuffle(colors).pop());
   }, [dispatch]);
 
   const handleOnDrop = (e: any) => {
-    const { prevColIndex, taskIndex } = JSON.parse(
+    const { prevColIndex, taskIndex, task } = JSON.parse(
       e.dataTransfer.getData("text")
     );
 
     if (colIndex !== prevColIndex) {
-      // dispatch(
-      //   boardsSlice.actions.dragTask({ colIndex, prevColIndex, taskIndex })
-      // );
+      dispatch(
+        boardsSlice.actions.dragTask({ colIndex, prevColIndex, taskIndex })
+      );
+      //update db
+
+      updateTask({
+        variables: {
+          updateTaskInput: {
+            id: task.id,
+            title: task.title,
+            columnId: column.id,
+            description: task.description,
+          },
+        },
+      });
     }
   };
 

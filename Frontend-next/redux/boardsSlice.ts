@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import data from "../data.json";
 import { IBoard, IColumn, ISubtask, ITask } from "../interfaces";
 
@@ -100,20 +100,24 @@ const boardsSlice = createSlice({
     //     }
     //   },
 
-    //   dragTask: (state, action) => {
-    //     const { colIndex, prevColIndex, taskIndex } = action.payload;
-    //     const board: IBoard | undefined = state.find((board) => board.isActive);
-    //     if (board) {
-    //       const prevCol: IColumn | undefined = board.columns.find(
-    //         (col, i) => i === prevColIndex
-    //       );
-    //       if (prevCol) {
-    //         const task: ITask | undefined = prevCol.tasks.splice(taskIndex, 1)[0];
-    //         //@ts-ignore
-    //         board.columns.find((_col, i) => i === colIndex).tasks.push(task);
-    //       }
-    //     }
-    //   },
+    dragTask: (state, action) => {
+      const { colIndex, prevColIndex, taskIndex } = action.payload;
+
+      const id = state.selectedBoard?.id;
+      const board = state.selectedBoard;
+      if (board) {
+        const prevCol: IColumn | undefined = board.columns.find(
+          (col, i) => i === prevColIndex
+        );
+        if (prevCol) {
+          const task: ITask | undefined = prevCol.tasks.splice(taskIndex, 1)[0];
+
+          //@ts-ignore
+          board.columns.find((_col, i) => i === colIndex).tasks.push(task);
+        }
+        // console.log(current(state.boardsList));
+      }
+    },
     //   setSubtaskCompleted: (state, action) => {
     //     const payload = action.payload;
     //     const board: IBoard | undefined = state.find((board) => board.isActive);
