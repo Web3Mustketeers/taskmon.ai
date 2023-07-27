@@ -50,9 +50,6 @@ function Home() {
   const columns: IColumn[] | [] = selectedBoard ? selectedBoard.columns : [];
 
   const [isSideBarOpen, setIsSideBarOpen] = useState(true);
-  useEffect(() => {
-    console.log(boards);
-  }, [boards]);
 
   return (
     <div
