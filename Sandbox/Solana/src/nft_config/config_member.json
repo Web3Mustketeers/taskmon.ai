@@ -1,0 +1,14 @@
+{
+  "uploadPath": "./src/images/",
+  "imgFileName": "s1.png",
+  "imgType": "image/png",
+  "imgName": "ProjectMember",
+  "description": "Official web!",
+  "attributes": [
+    { "trait_type": "Type", "value": "BackendSpecialist" },
+    { "trait_type": "Skill", "value": "5" },
+    { "trait_type": "Stamina", "value": "3" }
+  ],
+  "sellerFeeBasisPoints": 500,
+  "symbol": "PjM"
+}
