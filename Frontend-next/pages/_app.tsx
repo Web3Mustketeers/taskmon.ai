@@ -30,10 +30,12 @@ export default function App({ Component, pageProps }: AppProps) {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
+
             <Provider store={store}>
               <CustomHead />
               <Component {...pageProps} />
             </Provider>
+
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>

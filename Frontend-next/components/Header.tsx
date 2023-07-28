@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Logo from "@assets/logo-mobile.svg";
+
 import Cookies from "universal-cookie";
+
 import iconDown from "@assets/icon-chevron-down.svg";
 import iconUp from "@assets/icon-chevron-up.svg";
 import elipsis from "@assets/icon-vertical-ellipsis.svg";
@@ -14,7 +16,9 @@ import boardsSlice from "@redux/boardsSlice";
 import { RootState } from "@redux/store";
 import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+
 import { SigninMessage } from "../utils/SigninMessage";
 import bs58 from "bs58";
 import Image from "next/image";
@@ -34,11 +38,13 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
+
   const wallet = useWallet();
   const walletModal = useWalletModal();
   const dispatch = useDispatch();
   const { connection } = useConnection();
   const { publicKey } = useWallet();
+
 
   const boards = useSelector((state: RootState) => state.boards.boardsList);
   //@ts-ignore
@@ -56,22 +62,9 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
       if (!wallet.connected) {
         walletModal.setVisible(true);
       }
-      // const csrf = await getCsrfToken();
-      // if (!wallet.publicKey || !csrf || !wallet.signMessage) return;
-      // const message = new SigninMessage({
-      //   domain: typeof window !== "undefined" ? window.location.host : "",
-      //   publicKey: wallet.publicKey?.toBase58(),
-      //   statement: `Sign this message to sign in to the app.`,
-      //   nonce: csrf,
-      // });
-      // const data = new TextEncoder().encode(message.prepare());
-      // const signature = await wallet.signMessage(data);
-      // const serializedSignature = bs58.encode(signature);
-      // signIn("credentials", {
-      //   message: JSON.stringify(message),
-      //   redirect: false,
-      //   signature: serializedSignature,
-      // });
+
+      
+
     } catch (error) {
       console.log(error);
     }
@@ -105,6 +98,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
 
   useEffect(() => {
     if (wallet.connected) {
+
       handleSignIn();
     }
   }, [wallet.connected]);
@@ -126,24 +120,28 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
 
   const onDeleteBtnClick = async (e: any) => {
     if (e.target.textContent === "Delete") {
+
       setIsDeleteModalOpen(false);
       dispatch(boardsSlice.actions.updateLoading({ act: true }));
+
       deleteBoard({
         variables: {
           id: selectedBoard.id,
         },
       });
 
+
       await client.resetStore();
       await client.refetchQueries({
         include: [GET_BOARDS],
       });
+
       dispatch(boardsSlice.actions.updateLoading({ act: false }));
+
     } else {
       setIsDeleteModalOpen(false);
     }
   };
-
   const truncate = (
     text: string,
     startChars: number,
@@ -161,6 +159,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
     return text;
   };
 
+
   return (
     <div className=" p-4 fixed left-0 bg-white dark:bg-[#2b2c37] z-20 right-0 ">
       <header className=" flex justify-between dark:text-white items-center  ">
@@ -171,6 +170,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
             TaskmonAi
           </h3>
           <div className=" flex items-center ">
+
             {!publicKey && (
               <button
                 className=" border border-[#635fc7] text-[#635fc7] py-2 px-4 rounded-full text-lg font-semibold hover:opacity-80 duration-200 hidden md:block "
@@ -187,6 +187,7 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
                 {truncate(publicKey?.toBase58(), 5, 5, 15)}
               </button>
             )}
+
             <Image
               src={openDropdown ? iconUp : iconDown}
               alt=" dropdown icon"
