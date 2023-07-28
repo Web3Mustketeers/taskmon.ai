@@ -10,6 +10,7 @@ import { IBoard, IColumn } from "interfaces";
 import { GET_BOARDS } from "queries/BoardQueries";
 import { useQuery } from "@apollo/client";
 import boardsSlice from "@redux/boardsSlice";
+import LoadingModal from "@modals/LoadingModal";
 
 function Home() {
   const size = useWindowSize();
@@ -95,6 +96,9 @@ function Home() {
           setIsBoardModalOpen={setIsBoardModalOpen}
         />
       )}
+      {/* {isLoadingModalOpen && (
+        <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />
+      )} */}
     </div>
   );
 }

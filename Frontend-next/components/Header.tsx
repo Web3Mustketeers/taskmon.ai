@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Logo from "@assets/logo-mobile.svg";
+import Cookies from "universal-cookie";
 import iconDown from "@assets/icon-chevron-down.svg";
 import iconUp from "@assets/icon-chevron-up.svg";
 import elipsis from "@assets/icon-vertical-ellipsis.svg";
@@ -13,7 +14,7 @@ import boardsSlice from "@redux/boardsSlice";
 import { RootState } from "@redux/store";
 import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { SigninMessage } from "../utils/SigninMessage";
 import bs58 from "bs58";
 import Image from "next/image";
@@ -32,10 +33,12 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const [boardType, setBoardType] = useState("add");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const { data: session, status } = useSession();
+
   const wallet = useWallet();
   const walletModal = useWalletModal();
   const dispatch = useDispatch();
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
 
   const boards = useSelector((state: RootState) => state.boards.boardsList);
   //@ts-ignore
@@ -53,29 +56,55 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
       if (!wallet.connected) {
         walletModal.setVisible(true);
       }
-      const csrf = await getCsrfToken();
-      if (!wallet.publicKey || !csrf || !wallet.signMessage) return;
-      const message = new SigninMessage({
-        domain: typeof window !== "undefined" ? window.location.host : "",
-        publicKey: wallet.publicKey?.toBase58(),
-        statement: `Sign this message to sign in to the app.`,
-        nonce: csrf,
-      });
-      const data = new TextEncoder().encode(message.prepare());
-      const signature = await wallet.signMessage(data);
-      const serializedSignature = bs58.encode(signature);
-      signIn("credentials", {
-        message: JSON.stringify(message),
-        redirect: false,
-        signature: serializedSignature,
-      });
+      // const csrf = await getCsrfToken();
+      // if (!wallet.publicKey || !csrf || !wallet.signMessage) return;
+      // const message = new SigninMessage({
+      //   domain: typeof window !== "undefined" ? window.location.host : "",
+      //   publicKey: wallet.publicKey?.toBase58(),
+      //   statement: `Sign this message to sign in to the app.`,
+      //   nonce: csrf,
+      // });
+      // const data = new TextEncoder().encode(message.prepare());
+      // const signature = await wallet.signMessage(data);
+      // const serializedSignature = bs58.encode(signature);
+      // signIn("credentials", {
+      //   message: JSON.stringify(message),
+      //   redirect: false,
+      //   signature: serializedSignature,
+      // });
     } catch (error) {
       console.log(error);
     }
   };
 
+  const login = async () => {
+    let opts = {
+      method: "POST",
+      headers: {
+        Accept: "application.json",
+        //"Content-Type": "application/x-www-form-urlencoded",
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        wallet: publicKey?.toBase58(),
+      }),
+    };
+
+    let res = await fetch(`https://taskmon.up.railway.app/auth/signin`, opts);
+    let data = await res.json();
+    const cookies = new Cookies();
+    cookies.set("access_token", data.access_token, { path: "/" });
+    console.log(cookies.get("access_token"));
+  };
+
   useEffect(() => {
-    if (wallet.connected && status === "unauthenticated") {
+    if (!connection || !publicKey) return;
+
+    login();
+  }, [connection, publicKey]);
+
+  useEffect(() => {
+    if (wallet.connected) {
       handleSignIn();
     }
   }, [wallet.connected]);
@@ -97,20 +126,39 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
 
   const onDeleteBtnClick = async (e: any) => {
     if (e.target.textContent === "Delete") {
+      setIsDeleteModalOpen(false);
+      dispatch(boardsSlice.actions.updateLoading({ act: true }));
       deleteBoard({
         variables: {
           id: selectedBoard.id,
         },
       });
 
-      setIsDeleteModalOpen(false);
       await client.resetStore();
       await client.refetchQueries({
         include: [GET_BOARDS],
       });
+      dispatch(boardsSlice.actions.updateLoading({ act: false }));
     } else {
       setIsDeleteModalOpen(false);
     }
+  };
+
+  const truncate = (
+    text: string,
+    startChars: number,
+    endChars: number,
+    maxLength: number
+  ) => {
+    if (text.length > maxLength) {
+      var start = text.substring(0, startChars);
+      var end = text.substring(text.length - endChars, text.length);
+      while (start.length + end.length < maxLength) {
+        start = start + ".";
+      }
+      return start + end;
+    }
+    return text;
   };
 
   return (
@@ -123,15 +171,22 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
             TaskmonAi
           </h3>
           <div className=" flex items-center ">
-            {/* <h3 className=" truncate max-w-[200px] md:text-2xl text-xl font-bold md:ml-20 font-sans  ">
-              {board?.name}
-            </h3> */}
-            <button
-              className=" border border-[#635fc7] text-[#635fc7] py-2 px-4 rounded-full text-lg font-semibold hover:opacity-80 duration-200 hidden md:block "
-              onClick={handleSignIn}
-            >
-              Connect Wallet
-            </button>
+            {!publicKey && (
+              <button
+                className=" border border-[#635fc7] text-[#635fc7] py-2 px-4 rounded-full text-lg font-semibold hover:opacity-80 duration-200 hidden md:block "
+                onClick={handleSignIn}
+              >
+                Connect Wallet
+              </button>
+            )}
+            {publicKey && (
+              <button
+                className=" border border-[#635fc7] text-[#635fc7] py-2 px-4 rounded-full text-lg font-semibold hover:opacity-80 duration-200 hidden md:block "
+                onClick={handleSignIn}
+              >
+                {truncate(publicKey?.toBase58(), 5, 5, 15)}
+              </button>
+            )}
             <Image
               src={openDropdown ? iconUp : iconDown}
               alt=" dropdown icon"

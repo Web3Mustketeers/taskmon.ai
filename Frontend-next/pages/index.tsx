@@ -8,6 +8,7 @@ import Header from "@components/Header";
 import { useQuery } from "@apollo/client";
 import { GET_BOARDS } from "queries/BoardQueries";
 import { IBoard } from "interfaces";
+import LoadingModal from "@modals/LoadingModal";
 
 export default function IndexPage() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState<boolean>(false);
@@ -15,9 +16,12 @@ export default function IndexPage() {
   const boards: IBoard[] = useSelector(
     (state: RootState) => state.boards.boardsList
   );
-  const activeBoard: IBoard | {} | undefined = boards
-    ? boards.find((board: IBoard) => board.isActive)
-    : {};
+  const boardGlobalLoading: boolean = useSelector(
+    (state: RootState) => state.boards.loadingBoard
+  );
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
+  );
   const [hasMounted, setHasMounted] = useState(false);
   const {
     data: boardData,
@@ -29,10 +33,25 @@ export default function IndexPage() {
     setHasMounted(true);
   }, []);
 
+  const [isLoadingModalOpen, setIsLoadingModalOpen] =
+    useState(boardGlobalLoading);
+
   useEffect(() => {
     if (!loadingboard && boardData) {
       dispatch(boardsSlice.actions.addBoardList(boardData.boards));
-      dispatch(boardsSlice.actions.setBoardActive(boardData.boards[0]));
+      if (
+        !selectedBoard ||
+        Object.keys(selectedBoard ? selectedBoard : {}).length === 0
+      ) {
+        dispatch(boardsSlice.actions.setBoardActive(boardData.boards[0]));
+      } else {
+        //get prev selected board from array
+        const prevBoard = boardData.boards.find(
+          (board: IBoard) => board.id == selectedBoard.id
+        );
+        dispatch(boardsSlice.actions.setBoardActive(prevBoard));
+      }
+      dispatch(boardsSlice.actions.updateLoading({ act: false }));
     }
   }, [loadingboard, boardData]);
 
@@ -48,23 +67,31 @@ export default function IndexPage() {
     <>
       <div className=" overflow-hidden  overflow-x-scroll relative">
         <>
-          {boards.length > 0 ? (
+          {!loadingboard && (
             <>
-              <Header
-                // @ts-ignore
-                setIsBoardModalOpen={setIsBoardModalOpen}
-                isBoardModalOpen={isBoardModalOpen}
-              />
-              <Home
-                //@ts-ignore
-                setIsBoardModalOpen={setIsBoardModalOpen}
-                isBoardModalOpen={isBoardModalOpen}
-              />
+              {boards.length > 0 ? (
+                <>
+                  <Header
+                    // @ts-ignore
+                    setIsBoardModalOpen={setIsBoardModalOpen}
+                    isBoardModalOpen={isBoardModalOpen}
+                  />
+                  <Home
+                    //@ts-ignore
+                    setIsBoardModalOpen={setIsBoardModalOpen}
+                    isBoardModalOpen={isBoardModalOpen}
+                  />
+                </>
+              ) : (
+                <>
+                  <EmptyBoard type="add" />
+                </>
+              )}
             </>
-          ) : (
-            <>
-              <EmptyBoard type="add" />
-            </>
+          )}
+
+          {boardGlobalLoading && (
+            <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />
           )}
         </>
       </div>

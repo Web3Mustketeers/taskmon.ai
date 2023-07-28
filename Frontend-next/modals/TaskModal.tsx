@@ -108,12 +108,15 @@ function TaskModal({ taskIndex, colIndex, setIsTaskModalOpen }: IProp) {
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
-    setIsTaskModalOpen(false);
-    setIsDeleteModalOpen(false);
+
+    dispatch(boardsSlice.actions.updateLoading({ act: false }));
   };
 
   const onDeleteBtnClick = async (e: any) => {
     if (e.target.textContent === "Delete") {
+      setIsDeleteModalOpen(false);
+      setIsTaskModalOpen(false);
+      dispatch(boardsSlice.actions.updateLoading({ act: true }));
       deleteTask({
         variables: {
           id: task?.id,

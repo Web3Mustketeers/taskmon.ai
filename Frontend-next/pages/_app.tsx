@@ -30,12 +30,10 @@ export default function App({ Component, pageProps }: AppProps) {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-            <SessionProvider session={pageProps.session} refetchInterval={0}>
-              <Provider store={store}>
-                <CustomHead />
-                <Component {...pageProps} />
-              </Provider>
-            </SessionProvider>
+            <Provider store={store}>
+              <CustomHead />
+              <Component {...pageProps} />
+            </Provider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
