@@ -45,6 +45,10 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const selectedBoard: IBoard | undefined = useSelector(
     (state: RootState) => state.boards.selectedBoard
   );
+  //@ts-ignore
+  const isAuthenticated: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.authenticated
+  );
 
   const [
     deleteBoard,
@@ -94,11 +98,11 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
     let data = await res.json();
     const cookies = new Cookies();
     cookies.set("access_token", data.access_token, { path: "/" });
-    console.log(cookies.get("access_token"));
+    dispatch(boardsSlice.actions.updateAuth({}));
   };
 
   useEffect(() => {
-    if (!connection || !publicKey) return;
+    if (!connection || !publicKey || isAuthenticated) return;
 
     login();
   }, [connection, publicKey]);
