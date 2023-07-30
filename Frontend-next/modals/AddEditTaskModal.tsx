@@ -17,7 +17,9 @@ interface IProps {
   device: string;
   setIsTaskModalOpen: (act: boolean) => void;
   setIsAddTaskModalOpen: (act: boolean) => void;
+
   setIsLoadingModalOpen: (act: boolean) => void;
+
   taskIndex: number;
   prevColIndex: number;
 }
@@ -27,7 +29,9 @@ function AddEditTaskModal({
   device,
   setIsTaskModalOpen,
   setIsAddTaskModalOpen,
+
   setIsLoadingModalOpen,
+
   taskIndex,
   prevColIndex = 0,
 }: IProps) {
@@ -124,7 +128,9 @@ function AddEditTaskModal({
   };
 
   const onSubmit = (type: string) => {
+
     dispatch(boardsSlice.actions.updateLoading({ act: true }));
+
     if (type == "add") {
       createTask({
         variables: {
@@ -171,6 +177,7 @@ function AddEditTaskModal({
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
     dispatch(boardsSlice.actions.updateLoading({ act: false }));
   };
 
@@ -210,13 +217,16 @@ function AddEditTaskModal({
           },
         });
       }
+
     }
 
     setIsAddTaskModalOpen(false);
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
     dispatch(boardsSlice.actions.updateLoading({ act: false }));
+
   };
 
   useEffect(() => {
@@ -316,6 +326,7 @@ function AddEditTaskModal({
             </div>
           ))}
 
+
           <button
             className=" w-full items-center dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
             onClick={() => {
@@ -327,6 +338,7 @@ function AddEditTaskModal({
           >
             + Add New Subtask
           </button>
+
         </div>
 
         {/* current Status  */}

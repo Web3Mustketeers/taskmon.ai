@@ -8,7 +8,9 @@ import Header from "@components/Header";
 import { useQuery } from "@apollo/client";
 import { GET_BOARDS } from "queries/BoardQueries";
 import { IBoard } from "interfaces";
+
 import LoadingModal from "@modals/LoadingModal";
+
 
 export default function IndexPage() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState<boolean>(false);
@@ -16,12 +18,14 @@ export default function IndexPage() {
   const boards: IBoard[] = useSelector(
     (state: RootState) => state.boards.boardsList
   );
+
   const boardGlobalLoading: boolean = useSelector(
     (state: RootState) => state.boards.loadingBoard
   );
   const selectedBoard: IBoard | undefined = useSelector(
     (state: RootState) => state.boards.selectedBoard
   );
+
   const [hasMounted, setHasMounted] = useState(false);
   const {
     data: boardData,
@@ -52,6 +56,7 @@ export default function IndexPage() {
         dispatch(boardsSlice.actions.setBoardActive(prevBoard));
       }
       dispatch(boardsSlice.actions.updateLoading({ act: false }));
+
     }
   }, [loadingboard, boardData]);
 
@@ -67,6 +72,7 @@ export default function IndexPage() {
     <>
       <div className=" overflow-hidden  overflow-x-scroll relative">
         <>
+
           {!loadingboard && (
             <>
               {boards.length > 0 ? (
@@ -92,6 +98,7 @@ export default function IndexPage() {
 
           {boardGlobalLoading && (
             <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />
+
           )}
         </>
       </div>

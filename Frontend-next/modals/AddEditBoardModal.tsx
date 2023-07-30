@@ -21,9 +21,11 @@ interface INewCol {
 function AddEditBoardModal({
   setIsBoardModalOpen,
 
+
   type,
 }: {
   setIsBoardModalOpen: (act: boolean) => void;
+
 
   type: string;
 }) {
@@ -114,6 +116,7 @@ function AddEditBoardModal({
   };
 
   const onSubmit = (type: string) => {
+
     dispatch(boardsSlice.actions.updateLoading({ act: true }));
 
     if (type === "add") {
@@ -158,6 +161,7 @@ function AddEditBoardModal({
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
     dispatch(boardsSlice.actions.updateLoading({ act: false }));
   };
 
@@ -196,12 +200,15 @@ function AddEditBoardModal({
       }
     }
 
+
     setNewColumns(undefined);
     setIsBoardModalOpen(false);
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
     dispatch(boardsSlice.actions.updateLoading({ act: false }));
+
   };
 
   useEffect(() => {
@@ -277,6 +284,7 @@ function AddEditBoardModal({
             </div>
           ))}
           <div>
+
             <button
               className=" w-full items-center hover:opacity-70 dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
               onClick={() => {
@@ -289,6 +297,7 @@ function AddEditBoardModal({
             >
               + Add New Column
             </button>
+
 
             <button
               onClick={() => {
