@@ -11,7 +11,6 @@ import { IBoard } from "interfaces";
 
 import LoadingModal from "@modals/LoadingModal";
 
-
 export default function IndexPage() {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -41,6 +40,10 @@ export default function IndexPage() {
     useState(boardGlobalLoading);
 
   useEffect(() => {
+    if (boardError) {
+      dispatch(boardsSlice.actions.updateLoading({ act: false }));
+      return;
+    }
     if (!loadingboard && boardData) {
       dispatch(boardsSlice.actions.addBoardList(boardData.boards));
       if (
@@ -56,9 +59,8 @@ export default function IndexPage() {
         dispatch(boardsSlice.actions.setBoardActive(prevBoard));
       }
       dispatch(boardsSlice.actions.updateLoading({ act: false }));
-
     }
-  }, [loadingboard, boardData]);
+  }, [loadingboard, boardData, boardError]);
 
   // useEffect(() => {
   //   //if (!activeBoard && boards.length > 0)
@@ -72,33 +74,25 @@ export default function IndexPage() {
     <>
       <div className=" overflow-hidden  overflow-x-scroll relative">
         <>
-
           {!loadingboard && (
             <>
-              {boards.length > 0 ? (
-                <>
-                  <Header
-                    // @ts-ignore
-                    setIsBoardModalOpen={setIsBoardModalOpen}
-                    isBoardModalOpen={isBoardModalOpen}
-                  />
-                  <Home
-                    //@ts-ignore
-                    setIsBoardModalOpen={setIsBoardModalOpen}
-                    isBoardModalOpen={isBoardModalOpen}
-                  />
-                </>
-              ) : (
-                <>
-                  <EmptyBoard type="add" />
-                </>
-              )}
+              <>
+                <Header
+                  // @ts-ignore
+                  setIsBoardModalOpen={setIsBoardModalOpen}
+                  isBoardModalOpen={isBoardModalOpen}
+                />
+                <Home
+                  //@ts-ignore
+                  setIsBoardModalOpen={setIsBoardModalOpen}
+                  isBoardModalOpen={isBoardModalOpen}
+                />
+              </>
             </>
           )}
 
           {boardGlobalLoading && (
             <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />
-
           )}
         </>
       </div>
