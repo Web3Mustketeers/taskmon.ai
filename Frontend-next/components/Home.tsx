@@ -12,14 +12,14 @@ import { useQuery } from "@apollo/client";
 import boardsSlice from "@redux/boardsSlice";
 
 import LoadingModal from "@modals/LoadingModal";
-
+import { useWallet } from "@solana/wallet-adapter-react";
 
 function Home() {
   const size = useWindowSize();
   const dispatch = useDispatch();
 
   const [windowSize, setWindowSize] = useState<number[]>([]);
-
+  const { publicKey } = useWallet();
   useEffect(() => {
     if (size) {
       setWindowSize([size.width, size.height]);
@@ -89,7 +89,15 @@ function Home() {
         </>
       ) : (
         <>
-          <EmptyBoard type="edit" />
+          {publicKey ? (
+            <EmptyBoard type="edit" />
+          ) : (
+            <div className=" bg-white dark:bg-[#2b2c37] h-screen w-screen flex flex-col  items-center justify-center">
+              <h3 className=" text-gray-500 font-bold">
+                Please connect your wallet before you proceed
+              </h3>
+            </div>
+          )}
         </>
       )}
       {isBoardModalOpen && (
@@ -102,7 +110,6 @@ function Home() {
       {/* {isLoadingModalOpen && (
         <LoadingModal setIsLoadingModalOpen={setIsLoadingModalOpen} />
       )} */}
-
     </div>
   );
 }

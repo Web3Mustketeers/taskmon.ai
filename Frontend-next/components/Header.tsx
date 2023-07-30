@@ -38,13 +38,11 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
-
   const wallet = useWallet();
   const walletModal = useWalletModal();
   const dispatch = useDispatch();
   const { connection } = useConnection();
   const { publicKey } = useWallet();
-
 
   const boards = useSelector((state: RootState) => state.boards.boardsList);
   //@ts-ignore
@@ -66,9 +64,6 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
       if (!wallet.connected) {
         walletModal.setVisible(true);
       }
-
-      
-
     } catch (error) {
       console.log(error);
     }
@@ -102,7 +97,6 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
 
   useEffect(() => {
     if (wallet.connected) {
-
       handleSignIn();
     }
   }, [wallet.connected]);
@@ -124,7 +118,6 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
 
   const onDeleteBtnClick = async (e: any) => {
     if (e.target.textContent === "Delete") {
-
       setIsDeleteModalOpen(false);
       dispatch(boardsSlice.actions.updateLoading({ act: true }));
 
@@ -134,14 +127,12 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
         },
       });
 
-
       await client.resetStore();
       await client.refetchQueries({
         include: [GET_BOARDS],
       });
 
       dispatch(boardsSlice.actions.updateLoading({ act: false }));
-
     } else {
       setIsDeleteModalOpen(false);
     }
@@ -163,7 +154,6 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
     return text;
   };
 
-
   return (
     <div className=" p-4 fixed left-0 bg-white dark:bg-[#2b2c37] z-20 right-0 ">
       <header className=" flex justify-between dark:text-white items-center  ">
@@ -174,7 +164,6 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
             TaskmonAi
           </h3>
           <div className=" flex items-center ">
-
             {!publicKey && (
               <button
                 className=" border border-[#635fc7] text-[#635fc7] py-2 px-4 rounded-full text-lg font-semibold hover:opacity-80 duration-200 hidden md:block "
@@ -204,15 +193,17 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
         {/* Right Side */}
 
         <div className=" flex space-x-4 items-center md:space-x-6 ">
-          <button
-            className=" button hidden md:block "
-            onClick={() => {
-              setIsTaskModalOpen((prevState) => !prevState);
-            }}
-            //onClick={handleSignIn}
-          >
-            + Add New Task
-          </button>
+          {publicKey && (
+            <button
+              className=" button hidden md:block "
+              onClick={() => {
+                setIsTaskModalOpen((prevState) => !prevState);
+              }}
+              //onClick={handleSignIn}
+            >
+              + Add New Task
+            </button>
+          )}
           <button
             onClick={() => {
               setIsTaskModalOpen((prevState) => !prevState);
@@ -222,16 +213,18 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
             +
           </button>
 
-          <Image
-            onClick={() => {
-              setBoardType("edit");
-              setOpenDropdown(false);
-              setIsElipsisMenuOpen((prevState) => !prevState);
-            }}
-            src={elipsis}
-            alt="elipsis"
-            className=" cursor-pointer h-6"
-          />
+          {publicKey && (
+            <Image
+              onClick={() => {
+                setBoardType("edit");
+                setOpenDropdown(false);
+                setIsElipsisMenuOpen((prevState) => !prevState);
+              }}
+              src={elipsis}
+              alt="elipsis"
+              className=" cursor-pointer h-6"
+            />
+          )}
           {isElipsisMenuOpen && (
             <ElipsisMenu
               type="Boards"
