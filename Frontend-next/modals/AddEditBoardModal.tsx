@@ -20,9 +20,13 @@ interface INewCol {
 
 function AddEditBoardModal({
   setIsBoardModalOpen,
+
+
   type,
 }: {
   setIsBoardModalOpen: (act: boolean) => void;
+
+
   type: string;
 }) {
   const dispatch = useDispatch();
@@ -112,6 +116,9 @@ function AddEditBoardModal({
   };
 
   const onSubmit = (type: string) => {
+
+    dispatch(boardsSlice.actions.updateLoading({ act: true }));
+
     if (type === "add") {
       createBoard({
         variables: {
@@ -154,27 +161,54 @@ function AddEditBoardModal({
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
+    dispatch(boardsSlice.actions.updateLoading({ act: false }));
   };
 
   const proceedToUpdateColumn = async () => {
-    const newColumnArr = newColumns ? newColumns : [];
-    for (let index = 0; index < newColumnArr.length; index++) {
-      const column = newColumnArr[index];
+    const columsForCreation = newColumns?.filter(
+      (column) => column.id == undefined
+    );
+    //@ts-ignore
+    if (columsForCreation.length > 0) {
+      const newColumnArr = columsForCreation ? columsForCreation : [];
+      for (let index = 0; index < newColumnArr.length; index++) {
+        const column = newColumnArr[index];
 
-      const columnAction = await updateColumn({
-        variables: {
-          updateColumnInput: {
-            id: Number(column.id),
-            name: column.name,
+        const columnAction = await createColumn({
+          variables: {
+            createColumnInput: {
+              name: column.name,
+              boardId: updateBoardData.updateBoard.id,
+            },
           },
-        },
-      });
+        });
+      }
+    } else {
+      const newColumnArr = newColumns ? newColumns : [];
+      for (let index = 0; index < newColumnArr.length; index++) {
+        const column = newColumnArr[index];
+
+        const columnAction = await updateColumn({
+          variables: {
+            updateColumnInput: {
+              id: Number(column.id),
+              name: column.name,
+            },
+          },
+        });
+      }
     }
+
+
     setNewColumns(undefined);
     setIsBoardModalOpen(false);
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
+    dispatch(boardsSlice.actions.updateLoading({ act: false }));
+
   };
 
   useEffect(() => {
@@ -250,20 +284,21 @@ function AddEditBoardModal({
             </div>
           ))}
           <div>
-            {type == "add" && (
-              <button
-                className=" w-full items-center hover:opacity-70 dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
-                onClick={() => {
-                  setNewColumns((state) => [
-                    // @ts-ignore
-                    ...state,
-                    { name: "", tasks: [] },
-                  ]);
-                }}
-              >
-                + Add New Column
-              </button>
-            )}
+
+            <button
+              className=" w-full items-center hover:opacity-70 dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
+              onClick={() => {
+                setNewColumns((state) => [
+                  // @ts-ignore
+                  ...state,
+                  { name: "", tasks: [] },
+                ]);
+              }}
+            >
+              + Add New Column
+            </button>
+
+
             <button
               onClick={() => {
                 const isValid = validate();

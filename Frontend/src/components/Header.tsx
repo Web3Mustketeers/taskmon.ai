@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react'
 import Logo from '@assets/logo-mobile.svg'
 import iconDown from '@assets/icon-chevron-down.svg'
@@ -77,7 +76,6 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
     }
   }, [wallet.connected])
 
-
   const onDropdownClick = () => {
     setOpenDropdown((state) => !state)
     setIsElipsisMenuOpen(false)
@@ -121,11 +119,9 @@ function Header({ setIsBoardModalOpen, isBoardModalOpen }: IProps) {
         <div className=" flex space-x-4 items-center md:space-x-6 ">
           <button
             className=" button hidden md:block "
-
             onClick={() => {
               setIsTaskModalOpen((prevState) => !prevState)
             }}>
-
             + Add New Task
           </button>
           <button

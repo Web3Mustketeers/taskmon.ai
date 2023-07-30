@@ -5,9 +5,14 @@ import { IBoard, IColumn, ISubtask, ITask } from "../interfaces";
 const initialState: {
   boardsList: IBoard[];
   selectedBoard: IBoard | undefined;
+
+  loadingBoard: boolean;
+  authenticated: boolean;
 } = {
   boardsList: [],
   selectedBoard: undefined,
+  loadingBoard: true,
+  authenticated: false,
 };
 
 const boardsSlice = createSlice({
@@ -46,6 +51,13 @@ const boardsSlice = createSlice({
     //   },
     setBoardActive: (state, action) => {
       state.selectedBoard = action.payload;
+    },
+
+    updateLoading: (state, action) => {
+      state.loadingBoard = action.payload.act;
+    },
+    updateAuth: (state, action) => {
+      state.authenticated = !state.authenticated;
     },
 
     //   addTask: (state, action) => {

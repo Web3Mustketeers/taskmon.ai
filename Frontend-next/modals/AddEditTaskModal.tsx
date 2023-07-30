@@ -17,6 +17,9 @@ interface IProps {
   device: string;
   setIsTaskModalOpen: (act: boolean) => void;
   setIsAddTaskModalOpen: (act: boolean) => void;
+
+  setIsLoadingModalOpen: (act: boolean) => void;
+
   taskIndex: number;
   prevColIndex: number;
 }
@@ -26,6 +29,9 @@ function AddEditTaskModal({
   device,
   setIsTaskModalOpen,
   setIsAddTaskModalOpen,
+
+  setIsLoadingModalOpen,
+
   taskIndex,
   prevColIndex = 0,
 }: IProps) {
@@ -122,6 +128,9 @@ function AddEditTaskModal({
   };
 
   const onSubmit = (type: string) => {
+
+    dispatch(boardsSlice.actions.updateLoading({ act: true }));
+
     if (type == "add") {
       createTask({
         variables: {
@@ -168,29 +177,56 @@ function AddEditTaskModal({
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
+    dispatch(boardsSlice.actions.updateLoading({ act: false }));
   };
 
   const proceedToUpdateSubTasks = async () => {
-    const newSubTasks = subtasks ? subtasks : [];
-    for (let index = 0; index < newSubTasks.length; index++) {
-      const currSubTask = newSubTasks[index];
+    const subTaskForCreation = subtasks?.filter(
+      (subtask) => subtask.id == undefined
+    );
+    //@ts-ignore
+    if (subTaskForCreation.length > 0) {
+      const newSubTasks = subTaskForCreation ? subTaskForCreation : [];
+      for (let index = 0; index < newSubTasks.length; index++) {
+        const currSubTask = newSubTasks[index];
 
-      const subTask = await updateSubTask({
-        variables: {
-          updateSubTaskInput: {
-            id: currSubTask.id,
-            title: currSubTask.title,
-            taskId: task.id,
-            isCompleted: currSubTask.isCompleted,
+        const subTask = await createSubTask({
+          variables: {
+            createSubTaskInput: {
+              title: currSubTask.title,
+              taskId: updateTaskData.updateTask.id,
+              isCompleted: currSubTask.isCompleted,
+            },
           },
-        },
-      });
+        });
+      }
+    } else {
+      const newSubTasks = subtasks ? subtasks : [];
+      for (let index = 0; index < newSubTasks.length; index++) {
+        const currSubTask = newSubTasks[index];
+
+        const subTask = await updateSubTask({
+          variables: {
+            updateSubTaskInput: {
+              id: currSubTask.id,
+              title: currSubTask.title,
+              taskId: task.id,
+              isCompleted: currSubTask.isCompleted,
+            },
+          },
+        });
+      }
+
     }
 
     setIsAddTaskModalOpen(false);
     await client.refetchQueries({
       include: [GET_BOARDS],
     });
+
+    dispatch(boardsSlice.actions.updateLoading({ act: false }));
+
   };
 
   useEffect(() => {
@@ -290,19 +326,19 @@ function AddEditTaskModal({
             </div>
           ))}
 
-          {type == "add" && (
-            <button
-              className=" w-full items-center dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
-              onClick={() => {
-                setSubtasks((state) => [
-                  ...state,
-                  { title: "", isCompleted: false },
-                ]);
-              }}
-            >
-              + Add New Subtask
-            </button>
-          )}
+
+          <button
+            className=" w-full items-center dark:text-[#635fc7] dark:bg-white  text-white bg-[#635fc7] py-2 rounded-full "
+            onClick={() => {
+              setSubtasks((state) => [
+                ...state,
+                { title: "", isCompleted: false },
+              ]);
+            }}
+          >
+            + Add New Subtask
+          </button>
+
         </div>
 
         {/* current Status  */}

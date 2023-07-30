@@ -10,9 +10,10 @@ import { RootState } from "@redux/store";
 import Image from "next/image";
 import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { SigninMessage } from "../utils/SigninMessage";
 import bs58 from "bs58";
+import Cookies from "universal-cookie";
 
 interface IProps {
   setOpenDropdown: (act: boolean) => void;
@@ -28,35 +29,57 @@ function HeaderDropDown({ setOpenDropdown, setIsBoardModalOpen }: IProps) {
   const { data: session, status } = useSession();
   const wallet = useWallet();
   const walletModal = useWalletModal();
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
+  //@ts-ignore
+  const isAuthenticated: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.authenticated
+  );
+
+  const boards = useSelector((state: RootState) => state.boards.boardsList);
+  //@ts-ignore
+  const selectedBoard: IBoard | undefined = useSelector(
+    (state: RootState) => state.boards.selectedBoard
+  );
 
   const handleSignIn = async () => {
     try {
       if (!wallet.connected) {
         walletModal.setVisible(true);
       }
-      const csrf = await getCsrfToken();
-      if (!wallet.publicKey || !csrf || !wallet.signMessage) return;
-      const message = new SigninMessage({
-        domain: typeof window !== "undefined" ? window.location.host : "",
-        publicKey: wallet.publicKey?.toBase58(),
-        statement: `Sign this message to sign in to the app.`,
-        nonce: csrf,
-      });
-      const data = new TextEncoder().encode(message.prepare());
-      const signature = await wallet.signMessage(data);
-      const serializedSignature = bs58.encode(signature);
-      signIn("credentials", {
-        message: JSON.stringify(message),
-        redirect: false,
-        signature: serializedSignature,
-      });
     } catch (error) {
       console.log(error);
     }
   };
 
+  const login = async () => {
+    let opts = {
+      method: "POST",
+      headers: {
+        Accept: "application.json",
+        //"Content-Type": "application/x-www-form-urlencoded",
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        wallet: publicKey?.toBase58(),
+      }),
+    };
+
+    let res = await fetch(`https://taskmon.up.railway.app/auth/signin`, opts);
+    let data = await res.json();
+    const cookies = new Cookies();
+    cookies.set("access_token", data.access_token, { path: "/" });
+    dispatch(boardsSlice.actions.updateAuth({}));
+  };
+
   useEffect(() => {
-    if (wallet.connected && status === "unauthenticated") {
+    if (!connection || !publicKey || isAuthenticated) return;
+
+    login();
+  }, [connection, publicKey]);
+
+  useEffect(() => {
+    if (wallet.connected) {
       handleSignIn();
     }
   }, [wallet.connected]);
@@ -66,8 +89,6 @@ function HeaderDropDown({ setOpenDropdown, setIsBoardModalOpen }: IProps) {
     setTheme(colorTheme);
     setDarkSide(checked);
   };
-
-  const boards = useSelector((state: RootState) => state.boards);
 
   return (
     <div
@@ -94,7 +115,7 @@ function HeaderDropDown({ setOpenDropdown, setIsBoardModalOpen }: IProps) {
         </button>
 
         <div className=" dropdown-borad  ">
-          {boards.map((board, index) => (
+          {boards?.map((board, index) => (
             <div
               className={` flex items-baseline space-x-2 px-5 py-4  ${
                 board.isActive &&
